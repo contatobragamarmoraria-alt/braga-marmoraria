@@ -1,0 +1,40 @@
+[
+  {
+    "id": "occ1",
+    "projectId": "OP-ANB-001",
+    "projectName": "Penthouse Ana Beatriz",
+    "clientName": "Ana Beatriz Cavalcanti",
+    "date": "2026-03-10",
+    "title": "Dano no Piso da Cliente",
+    "description": "A cliente relatou que durante a visita técnica para medição final, houve um dano (risco profundo) no piso de madeira da sala. O dano foi causado pela movimentação de equipamentos sem a proteção adequada.",
+    "type": "NEGATIVE",
+    "involvedTeamIds": [
+      "tm6",
+      "tm7"
+    ],
+    "involvedTeamNames": [
+      "Leandro Santos",
+      "Gabriel Lima"
+    ],
+    "location": "Sala de Estar",
+    "reportedBy": "Ana Beatriz Cavalcanti"
+  },
+  {
+    "id": "occ2",
+    "projectId": "OP-MSQ-002",
+    "projectName": "Clínica Dr. Marcos",
+    "clientName": "Dr. Marcos Siqueira",
+    "date": "2026-03-15",
+    "title": "Elogio à Limpeza e Organização",
+    "description": "O cliente entrou em contato para elogiar a postura da equipe durante a instalação noturna. Ressaltou que o ambiente foi deixado impecável, superando as expectativas de organização.",
+    "type": "POSITIVE",
+    "involvedTeamIds": [
+      "tm3"
+    ],
+    "involvedTeamNames": [
+      "Sandro Tech"
+    ],
+    "location": "Recepção",
+    "reportedBy": "Dr. Marcos Siqueira"
+  }
+]

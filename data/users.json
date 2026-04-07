@@ -1,0 +1,20 @@
+[
+  {
+    "id": "admin-1",
+    "name": "Administrador Braga",
+    "email": "admin@braga.com",
+    "role": "ADMIN",
+    "status": "ACTIVE",
+    "avatar": "https://ui-avatars.com/api/?name=Admin+Braga&background=D4AF37&color=fff",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "permissions": {
+      "canViewFinancials": true,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": true,
+      "canDeleteProjects": true,
+      "canManageUsers": true
+    }
+  }
+]

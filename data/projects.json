@@ -1,0 +1,135 @@
+[
+  {
+    "id": "OP-ANB-001",
+    "clientName": "Ana Beatriz Cavalcanti",
+    "clientAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200",
+    "clientEmail": "ana.beatriz@estudio.com",
+    "phone": "(11) 99122-3344",
+    "projectType": "Penthouse Jardins - Cozinha Integrada",
+    "concept": "Minimalismo escandinavo com foco em texturas naturais e veios contínuos do Quartzito.",
+    "value": 22500,
+    "paymentMethod": "Parcelado 10x s/ Juros (Cartão Corporativo)",
+    "startDate": "2025-11-20",
+    "estimatedDelivery": "15/04/2026",
+    "status": "AGUARDANDO_MEDICAO",
+    "progress": 25,
+    "responsible": "Ana Paula",
+    "image": "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&q=80&w=1200",
+    "beforeImages": [],
+    "afterImages": [],
+    "teamIds": [
+      "tm2",
+      "tm4"
+    ],
+    "supplierIds": [
+      "p1"
+    ],
+    "stakeholderIds": [
+      "p3"
+    ],
+    "materials": [],
+    "references": [],
+    "detailedScope": [
+      {
+        "title": "Bancada Principal",
+        "items": [
+          "Quartzito Taj Mahal 4cm",
+          "Acabamento em meia esquadria invisível"
+        ]
+      }
+    ],
+    "history": [],
+    "documents": [],
+    "tasks": [],
+    "timeline": [],
+    "contractData": {
+      "contractorName": "Ana Beatriz Cavalcanti",
+      "cpf": "123.456.789-00",
+      "phone": "(11) 99122-3344",
+      "address": "Alameda Santos, 1234 - Jardins",
+      "cep": "01419-001",
+      "salesperson": "Ana Paula",
+      "closingDate": "2025-11-20",
+      "projectType": "Penthouse Jardins - Cozinha Integrada",
+      "scope": [
+        "Bancada Cozinha",
+        "Ilha Central"
+      ],
+      "commercialConditions": {
+        "totalValue": 22500,
+        "paymentMethod": "Parcelado 10x s/ Juros",
+        "downPayment": 5000,
+        "cancellationRule": "O sinal não será reembolsado em caso de cancelamento por parte do contratante após 7 dias úteis."
+      },
+      "billingData": {
+        "pixKey": "00.000.000/0001-00",
+        "bank": "Bradesco (237)",
+        "agency": "1234",
+        "account": "56789-0"
+      },
+      "preExecutionStage": {
+        "siteCheckPerformed": false,
+        "templateReady": false,
+        "technicalConditionsMet": {
+          "plasterFinished": true,
+          "plumbingInstalled": true,
+          "electricalInstalled": false,
+          "cabinetStructureReady": false
+        }
+      },
+      "responsibilities": {
+        "client": [
+          "Fornecer cubas e cubos no ato da medição técnica.",
+          "Garantir ponto de água e esgoto no local.",
+          "Garantir ponto de energia 220v para ferramentas."
+        ],
+        "company": [
+          "Executar conforme projeto executivo aprovado.",
+          "Fornecer materiais de primeira qualidade.",
+          "Manter ambiente limpo e organizado durante a obra."
+        ]
+      },
+      "technicalConditions": {
+        "variationsAcknowledged": true,
+        "finishingTolerancesAccepted": false,
+        "educationCompleted": false
+      },
+      "warranty": {
+        "period": "12 meses contra defeitos de fabricação e instalação.",
+        "coverage": "Rachaduras espontâneas, infiltrações por vedação e descolamentos.",
+        "exclusions": "Impactos fortuitos, uso de produtos abrasivos, manchas de gordura."
+      }
+    }
+  },
+  {
+    "id": "OP-394",
+    "clientName": "Mariana Oliveira",
+    "clientEmail": "",
+    "phone": "",
+    "projectType": "Reforma Suíte Master",
+    "concept": "Troca de revestimentos, nova iluminação embutida e marcenaria planejada em carvalho.",
+    "value": 85000,
+    "paymentMethod": "A definir",
+    "startDate": "2026-04-01T20:16:35.460Z",
+    "estimatedDelivery": "20/12/2023",
+    "status": "LEAD",
+    "progress": 0,
+    "responsible": "Roberto Silva",
+    "tasks": [],
+    "timeline": [],
+    "history": [],
+    "beforeImages": [],
+    "afterImages": [],
+    "teamIds": [],
+    "supplierIds": [],
+    "stakeholderIds": [],
+    "materials": [
+      "Mármore Carrara",
+      "Madeira Carvalho",
+      "Metais Dourados"
+    ],
+    "references": [],
+    "photoLog": [],
+    "documents": []
+  }
+]
