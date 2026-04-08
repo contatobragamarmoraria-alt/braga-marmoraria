@@ -68,7 +68,7 @@ const SmartProjectModal: React.FC<Props> = ({ isOpen, onClose, onProjectCreated 
       paymentMethod: 'A definir',
       startDate: new Date().toISOString(),
       estimatedDelivery: deadline || '30/12/2023',
-      status: 'LEAD',
+      status: 'LEAD_FECHADO',
       progress: 0,
       responsible: 'Roberto Silva',
       tasks: [],

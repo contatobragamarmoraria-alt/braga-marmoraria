@@ -440,7 +440,7 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
       const projectDate = new Date(p.startDate);
       return projectDate.getFullYear() === currentDate.getFullYear() && 
              projectDate.getMonth() === currentDate.getMonth() && 
-             p.status === 'LEAD';
+             p.status === 'LEAD_FECHADO';
     });
   }, [projects, currentDate]);
 
@@ -615,7 +615,7 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
                   onClick={() => navigate('/app/producao')}
                 >
                   <p className="text-[8px] font-bold uppercase tracking-widest text-stone-500 mb-1 group-hover:text-gold transition-colors">Projetos Ativos</p>
-                  <p className="text-2xl font-serif text-gold group-hover:scale-110 transition-transform origin-right">{ongoingProjects.length}</p>
+                  <p className="text-xl font-serif text-gold">{projects.filter(p => p.status !== 'LEAD_FECHADO' && p.status !== 'FINALIZADO').length}</p>
                 </div>
                 <div className="h-10 w-px bg-white/10 hidden md:block" />
                 <div 

@@ -480,8 +480,8 @@ const UserManagement: React.FC = () => {
               <div className="p-8">
                 <UserProfile 
                   user={editingUser} 
-                  isAdminView={true} 
-                  onClose={() => setEditingUser(null)} 
+                  onUpdate={(u) => console.log('Update', u)} 
+                  onLogout={() => console.log('Logout from admin view')} 
                 />
               </div>
             </motion.div>

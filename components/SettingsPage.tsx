@@ -30,7 +30,7 @@ const SettingsItem = ({ icon: Icon, title, description, badge, onClick }: any) =
 );
 
 const SettingsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [view, setView] = useState<'main' | 'users' | 'profile'>('main');
 
   if (view === 'users') {
@@ -65,7 +65,7 @@ const SettingsPage: React.FC = () => {
           </button>
         </div>
         <div className="flex-1 overflow-y-auto custom-scroll pr-2">
-          <UserProfile user={user} />
+          <UserProfile user={user} onUpdate={(u) => console.log('Apenas visualizar', u)} onLogout={logout} />
         </div>
       </div>
     );

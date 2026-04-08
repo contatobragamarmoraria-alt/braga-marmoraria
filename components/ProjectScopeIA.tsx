@@ -89,7 +89,10 @@ const ProjectScopeIA: React.FC<Props> = ({ project, updateProject }) => {
       const analyzedScope: ProjectScope = {
         ...result,
         photos: uploadedFiles,
-        aiAnalysisDate: new Date().toISOString()
+        aiAnalysisDate: new Date().toISOString(),
+        itemType: result.itemType || 'Padrão',
+        inclusions: result.inclusions || [],
+        exclusions: result.exclusions || []
       };
 
       updateProject({
@@ -110,7 +113,10 @@ const ProjectScopeIA: React.FC<Props> = ({ project, updateProject }) => {
         clientName: project.clientName,
         clientPhone: project.phone,
         photos: uploadedFiles,
-        aiAnalysisDate: new Date().toISOString()
+        aiAnalysisDate: new Date().toISOString(),
+        itemType: 'Padrão',
+        inclusions: [],
+        exclusions: []
       };
       updateProject({ ...project, scope: fallbackScope });
     } finally {

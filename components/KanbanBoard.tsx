@@ -198,7 +198,7 @@ const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) =
           <div className="hidden md:flex items-center gap-6">
             <div className="text-right">
               <p className="text-[7px] font-bold uppercase tracking-widest text-stone-500 mb-0.5">Obras em Produção</p>
-              <p className="text-xl font-serif text-gold">{projects.filter(p => p.status !== 'LEAD' && p.status !== 'FINALIZADO').length}</p>
+              <p className="text-xl font-serif text-gold">{projects.filter(p => p.status !== 'LEAD_FECHADO' && p.status !== 'FINALIZADO').length}</p>
             </div>
           </div>
         </div>

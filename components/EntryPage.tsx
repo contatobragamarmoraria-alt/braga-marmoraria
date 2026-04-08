@@ -50,17 +50,10 @@ const EntryPage: React.FC = () => {
         className="flex flex-col items-center text-center max-w-md w-full bg-white p-10 md:p-12 rounded-[3rem] shadow-2xl border border-stone-100"
       >
         <img 
-          src="/logo.png" 
+          src="/logo.png.jpg" 
           alt="Braga Marmoraria" 
-          className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-stone-50 shadow-lg mb-6" 
+          className="w-48 md:w-64 h-auto object-contain mb-8" 
         />
-        
-        <h1 className="text-xl md:text-2xl font-serif font-bold text-stone-950 uppercase tracking-tight leading-tight mb-1">
-          Acesso ao Portal
-        </h1>
-        <h2 className="text-sm md:text-base font-serif italic text-stone-500 mb-8">
-          Braga Marmoraria
-        </h2>
 
         <div className="w-full space-y-6">
           <button 
