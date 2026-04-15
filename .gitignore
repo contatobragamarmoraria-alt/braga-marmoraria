@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# dist - NÃO ignorar! Hostinger precisa dos arquivos compilados
 dist-ssr
 *.local
 

@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Braga Marmoraria | Sistema de Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gold: '#D4AF37',
+              onyx: '#0A0A0A',
+              ivory: '#FDFCFB',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --gold: #D4AF37;
+        --dark-gold: #B8860B;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.5s ease, color 0.5s ease;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .dark body {
+        background-color: #0A0A0A;
+        color: #E5E5E5;
+      }
+      
+      .light body {
+        background-color: #FDFCFB;
+        color: #1C1917;
+      }
+
+      .font-serif {
+        font-family: 'Playfair Display', serif;
+      }
+      
+      .gold-gradient {
+        background: linear-gradient(135deg, #D4AF37 0%, #F5E0A3 50%, #B8860B 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .gold-bg {
+        background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      }
+
+      .custom-scroll::-webkit-scrollbar {
+        width: 3px;
+      }
+      
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      
+      .dark ::-webkit-scrollbar-track { background: #0A0A0A; }
+      .light ::-webkit-scrollbar-track { background: #FDFCFB; }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #D4AF37;
+        border-radius: 10px;
+      }
+
+      .marble-overlay {
+        background-image: url('https://www.transparenttextures.com/patterns/black-mamba.png');
+        opacity: 0.03;
+        pointer-events: none;
+      }
+      .dark .marble-overlay {
+        opacity: 0.05;
+        filter: invert(1);
+      }
+
+      /* Fix for mobile height issues */
+      .h-screen {
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+      }
+    </style>
+    <script>
+      // Actual VH fix for mobile browsers
+      const setVh = () => {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      };
+      window.addEventListener('resize', setVh);
+      window.addEventListener('orientationchange', setVh);
+      setVh();
+    </script>
+  <script type="module" crossorigin src="/assets/index-B2W8JlyJ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CW5x5WOa.css">
+</head>
+  <body>
+    <div id="root" class="relative z-10"></div>
+    <div class="fixed inset-0 marble-overlay z-0"></div>
+  </body>
+</html>
