@@ -467,15 +467,28 @@ async function startServer() {
   });
 
   // Produção: servir arquivos estáticos
+  console.log("[DEBUG] Configurando rotas estáticas...");
   const distPath = path.join(process.cwd(), 'dist');
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  console.log(`[DEBUG] Tentando iniciar o servidor na porta ${PORT}...`);
+  try {
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[SUCESSO] Server running on http://0.0.0.0:${PORT}`);
+    });
+    
+    server.on('error', (err) => {
+      console.error("[ERRO CRÍTICO] Falha no app.listen:", err);
+    });
+  } catch (e) {
+    console.error("[EXCEÇÃO CRÍTICA] Erro ao tentar ligar a porta:", e);
+  }
 }
 
-startServer();
+console.log("[DEBUG] Chamando startServer()...");
+startServer().catch(err => {
+  console.error("[ERRO FATAL] startServer() falhou:", err);
+});
