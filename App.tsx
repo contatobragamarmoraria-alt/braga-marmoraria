@@ -110,14 +110,14 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           <div className={`px-6 mb-6 md:mb-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
             {!isCollapsed && (
               <div className="flex items-center gap-3">
-                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto object-contain shrink-0 transition-transform rotate-[35deg]" />
+                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
                 <h1 className="text-[11px] font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
                   Braga Marmoraria
                 </h1>
               </div>
             )}
             {isCollapsed && (
-               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-6 h-auto object-contain shrink-0 transition-transform rotate-[35deg]" />
+               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-6 h-6 object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
             )}
             <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden md:block p-1.5 text-stone-400 hover:text-gold transition-all">
               {isCollapsed ? <PanelLeft size={18}/> : <PanelLeftClose size={18}/>}
@@ -186,7 +186,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             <button onClick={() => navigate('/app/dashboard')} className="hidden md:flex p-2.5 text-stone-500 hover:text-stone-950 dark:text-stone-400 transition-all border border-stone-200 dark:border-white/5 rounded-xl items-center gap-2 bg-white dark:bg-white/5"><Home size={16} /><span className="text-[9px] font-bold uppercase tracking-widest">Início</span></button>
           </div>
           <div className="flex items-center gap-2 md:gap-3 px-2">
-            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-6 md:h-8 w-auto object-contain shrink-0 transition-transform rotate-[35deg]" />
+            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-6 md:h-8 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
             <h1 className="text-[9px] md:text-sm font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
               Braga Marmoraria
             </h1>

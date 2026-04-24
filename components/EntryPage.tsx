@@ -47,25 +47,25 @@ const EntryPage: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center text-center max-w-md w-full bg-white p-10 md:p-12 rounded-[3rem] shadow-2xl border border-stone-100"
+        className="flex flex-col items-center text-center max-w-sm w-full bg-white p-8 md:p-10 rounded-[2rem] shadow-xl border border-stone-100"
       >
         <img 
           src="/logo.png.jpg" 
           alt="Braga Marmoraria" 
-          className="w-48 md:w-64 h-auto object-contain mb-8 transition-transform rotate-[35deg]" 
+          className="w-32 h-32 md:w-40 md:h-40 object-contain mb-8 mix-blend-multiply rounded-full transition-transform rotate-[45deg] shadow-sm" 
         />
 
-        <div className="w-full space-y-6">
+        <div className="w-full space-y-4">
           <button 
             type="button"
             onClick={handleGuestLogin}
             disabled={showLoading}
-            className="w-full py-6 gold-bg text-black rounded-2xl text-xs font-bold uppercase tracking-[0.3em] shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-70"
+            className="w-full py-4 gold-bg text-black rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70"
           >
             {showLoading ? (
-              <Loader2 size={24} className="animate-spin" />
+              <Loader2 size={20} className="animate-spin" />
             ) : (
-              <>Entrar no Sistema <ArrowRight size={20} /></>
+              <>Entrar no Sistema <ArrowRight size={16} /></>
             )}
           </button>
 
@@ -75,20 +75,20 @@ const EntryPage: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase tracking-wider text-center justify-center px-2"
+                className="flex items-center gap-2 text-red-500 text-[9px] font-bold uppercase tracking-wider text-center justify-center px-2 py-1"
               >
-                <AlertCircle size={14} />
+                <AlertCircle size={12} />
                 {error}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div className="relative py-4">
+          <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-stone-100"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
-              <span className="bg-white px-4 text-stone-400">Ou use sua conta</span>
+            <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-widest">
+              <span className="bg-white px-3 text-stone-400">Ou use sua conta</span>
             </div>
           </div>
 
@@ -96,9 +96,9 @@ const EntryPage: React.FC = () => {
             type="button"
             onClick={handleGoogleLogin}
             disabled={showLoading}
-            className="w-full py-4 bg-white border border-stone-200 text-stone-900 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-stone-50 transition-all flex items-center justify-center gap-3"
+            className="w-full py-3.5 bg-white border border-stone-200 text-stone-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all flex items-center justify-center gap-3"
           >
-            <Chrome size={18} className="text-red-500" /> Google Account
+            <Chrome size={16} className="text-red-500" /> Google Account
           </button>
         </div>
       </motion.div>
