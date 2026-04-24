@@ -9,6 +9,7 @@ interface AuthContextType {
   loginWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
   loginAsGuest: () => Promise<void>;
+  loginWithRole: (name: string, role: UserRole) => Promise<void>;
   logout: () => Promise<void>;
   isAuthReady: boolean;
 }
@@ -113,6 +114,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false);
   };
 
+  const loginWithRole = async (name: string, role: UserRole) => {
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const assignedPermissions: UserPermissions = {
+      canViewFinancials: role === 'ADMIN' || role === 'MANAGER',
+      canViewTechnical: role !== 'CLIENT',
+      canViewCalendar: role !== 'CLIENT',
+      canViewOccurrences: role !== 'CLIENT',
+      canEditProjects: role === 'ADMIN' || role === 'MANAGER',
+      canDeleteProjects: role === 'ADMIN',
+      canManageUsers: role === 'ADMIN'
+    };
+    
+    const configuredUser: AppUser = {
+      id: 'usr-' + Math.random().toString(36).substr(2, 9),
+      name: name,
+      email: `${name.toLowerCase().replace(/\s+/g, '')}@bragamarmoraria.com.br`,
+      role: role,
+      status: 'ACTIVE',
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
+      createdAt: new Date().toISOString(),
+      permissions: assignedPermissions
+    };
+    
+    setUser(configuredUser);
+    localStorage.setItem('bm-local-user', JSON.stringify(configuredUser));
+    setLoading(false);
+  };
+
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
@@ -120,7 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, signUpWithEmail, loginAsGuest, logout, isAuthReady }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, signUpWithEmail, loginAsGuest, loginWithRole, logout, isAuthReady }}>
       {children}
     </AuthContext.Provider>
   );

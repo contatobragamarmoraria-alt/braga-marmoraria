@@ -13,6 +13,7 @@ export interface SupabaseProject {
   occurrences?: any[];
   timeline?: any[];
   documents?: any[];
+  audit_logs?: any[];
 }
 
 export const supabaseProjectService = {
@@ -31,6 +32,7 @@ export const supabaseProjectService = {
   },
 
   createProject: async (project: SupabaseProject): Promise<SupabaseProject> => {
+    console.log('Tentando criar projeto no Supabase com payload:', project);
     const { data, error } = await supabase
       .from('projects')
       .insert([project])
@@ -38,8 +40,8 @@ export const supabaseProjectService = {
       .single();
       
     if (error) {
-      console.error('Error creating project in Supabase:', error);
-      throw error;
+      console.error('ERRO DETALHADO DO SUPABASE:', error);
+      throw new Error(`Erro Supabase [${error.code}]: ${error.message}`);
     }
     
     return data;

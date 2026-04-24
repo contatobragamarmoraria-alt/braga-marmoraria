@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabaseProjectService, SupabaseProject } from '../services/supabaseProjectService';
 import { Plus, LayoutTemplate, MapPin, Tag, Grid } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import ProjectFormDialog from './ProjectFormDialog';
 
 const ProjectListModule: React.FC = () => {
@@ -10,6 +11,7 @@ const ProjectListModule: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const fetchProjects = async () => {
     try {
@@ -31,6 +33,19 @@ const ProjectListModule: React.FC = () => {
     fetchProjects();
   };
 
+  const getFilteredProjects = () => {
+    if (!user) return [];
+    if (user.role === 'ADMIN' || user.role === 'MANAGER') return projects;
+    
+    // For specialized roles (Team Member, Partner), filter if their name is allocated in the project text
+    return projects.filter(p => {
+       const blob = JSON.stringify(p).toLowerCase();
+       return blob.includes(user.name.toLowerCase());
+    });
+  };
+
+  const filteredProjects = getFilteredProjects();
+
   return (
     <div className="flex flex-col gap-4 relative min-h-full pb-8">
       {/* Header Banner */}
@@ -47,8 +62,8 @@ const ProjectListModule: React.FC = () => {
           </div>
           <div className="hidden md:flex items-center gap-6">
             <div className="text-right">
-              <p className="text-[7px] font-bold uppercase tracking-widest text-stone-500 mb-0.5">Total de Projetos</p>
-              <p className="text-xl font-serif text-gold">{projects.length}</p>
+              <p className="text-[7px] font-bold uppercase tracking-widest text-stone-500 mb-0.5">{user?.role === 'ADMIN' ? 'Total de Projetos' : 'Meus Projetos Alocados'}</p>
+              <p className="text-xl font-serif text-gold">{filteredProjects.length}</p>
             </div>
           </div>
         </div>
@@ -71,15 +86,15 @@ const ProjectListModule: React.FC = () => {
         <div className="flex-1 flex justify-center items-center">
            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full" />
         </div>
-      ) : projects.length === 0 ? (
+      ) : filteredProjects.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white/50 rounded-3xl border border-stone-200 border-dashed">
           <LayoutTemplate size={32} className="text-stone-300 mb-3" />
           <h3 className="text-sm font-bold uppercase tracking-widest text-stone-400">Nenhum projeto encontrado</h3>
-          <p className="text-xs text-stone-400 mt-2">Clique em 'Novo Projeto' para adicionar a sua primeira obra no Supabase.</p>
+          <p className="text-xs text-stone-400 mt-2">Você não possui projetos alocados neste momento.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 custom-scroll">
-          {projects.map((project) => (
+          {filteredProjects.map((project) => (
             <motion.div 
               key={project.id}
               onClick={() => navigate(`/app/projetos-detalhe/${project.id}`)}

@@ -279,12 +279,18 @@ const SalesFlow: React.FC = () => {
                         >
                           <div className="flex items-center gap-2 mb-2">
                             <GripVertical size={12} className={isSelected ? 'text-gold' : 'text-stone-300'} />
-                            <h4 className={`flex-1 text-sm font-serif font-bold uppercase tracking-tight ${isSelected ? 'text-stone-950 dark:text-gold' : 'text-stone-900 dark:text-stone-300'}`}>{item.label}</h4>
-                            <button onClick={(e) => { e.stopPropagation(); setEditingItem({ stageId: stage.id, item }); }} className="p-1 opacity-0 group-hover:opacity-100 text-stone-300 hover:text-gold"><Edit3 size={12} /></button>
+                            <h4 className={`flex-1 text-sm font-serif font-bold uppercase tracking-tight line-clamp-1 ${isSelected ? 'text-stone-950 dark:text-gold' : 'text-stone-900 dark:text-stone-300'}`}>{item.label}</h4>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingItem({ stageId: stage.id, item }); }} className="p-1.5 text-stone-400 hover:text-gold hover:bg-gold/10 rounded-md transition-all"><Edit3 size={14} /></button>
                           </div>
-                          {item.description && <p className="text-xs text-stone-400 dark:text-stone-500 italic mb-2 line-clamp-2 leading-relaxed">{item.description}</p>}
-                          <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-white/5">
+                          {item.description && <p className="text-xs text-stone-400 dark:text-stone-500 italic mb-3 line-clamp-2 leading-relaxed">{item.description}</p>}
+                          <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-white/5">
                             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1.5"><Calendar size={10}/> {item.date || 'TBD'}</span>
+                            <button onClick={(e) => { 
+                               e.stopPropagation(); 
+                               if(window.confirm('Excluir atividade?')) {
+                                  setStages(prev => prev.map(s => s.id === stage.id ? { ...s, items: s.items.filter(i => i.id !== item.id) } : s));
+                               }
+                            }} className="p-1 text-stone-300 hover:text-red-500 transition-colors"><Trash2 size={12}/></button>
                           </div>
                         </motion.div>
                       );
@@ -307,7 +313,11 @@ const SalesFlow: React.FC = () => {
                <div className="space-y-5">
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Título da Atividade</label>
-                    <input type="text" value={editingItem.item.label} onChange={(e) => setEditingItem({ ...editingItem, item: { ...editingItem.item, label: e.target.value } })} className="w-full bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-3.5 text-sm font-serif" />
+                    <input type="text" value={editingItem.item.label} onChange={(e) => setEditingItem({ ...editingItem, item: { ...editingItem.item, label: e.target.value } })} className="w-full bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-3.5 text-sm font-serif outline-none focus:border-gold" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Descrição</label>
+                    <textarea rows={3} value={editingItem.item.description || ''} onChange={(e) => setEditingItem({ ...editingItem, item: { ...editingItem.item, description: e.target.value } })} className="w-full bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-3.5 text-sm font-serif outline-none focus:border-gold resize-none" />
                   </div>
                   <div className="flex gap-4 pt-4">
                     <button onClick={() => setEditingItem(null)} className="flex-1 py-4 border border-stone-200 dark:border-white/10 text-stone-400 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Cancelar</button>

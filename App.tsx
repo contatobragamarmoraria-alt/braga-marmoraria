@@ -6,7 +6,7 @@ import {
   BarChart3, PanelLeftClose, PanelLeft,
   ChevronLeft, Sparkles, Sun, Moon, TrendingUp,
   Settings, Megaphone, Monitor, Users, MessageSquare,
-  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass
+  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -30,6 +30,7 @@ import Trash from './components/Trash';
 import WhatsAppMirror from './components/WhatsAppMirror';
 import UserProfile from './components/UserProfile';
 import ClientPortal from './components/ClientPortal';
+import CatalogModule from './components/CatalogModule';
 import { MOCK_USER } from './constants';
 import { Project, AppUser } from './types';
 import { initialProjects } from './services/mockData';
@@ -86,7 +87,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-ivory dark:bg-onyx transition-colors duration-500">
+    <div className="flex min-h-[100dvh] bg-ivory dark:bg-onyx transition-colors duration-500">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div 
@@ -103,22 +104,20 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
         fixed inset-y-0 left-0 z-[100] bg-white dark:bg-onyx border-r border-stone-200 dark:border-white/5 transition-all duration-500 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
         ${isCollapsed ? 'w-20' : 'w-64'}
-        md:relative md:translate-x-0 flex flex-col shrink-0
+        md:sticky md:translate-x-0 md:top-0 h-[100dvh] flex flex-col shrink-0
       `}>
         <div className="flex flex-col h-full py-4 md:py-6">
           <div className={`px-6 mb-6 md:mb-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
             {!isCollapsed && (
               <div className="flex items-center gap-3">
-                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-10 md:h-12 w-auto object-contain shrink-0" />
-                <div className="flex flex-col">
-                  <h1 className="text-[11px] font-bold tracking-tight text-stone-950 dark:text-white uppercase leading-tight">
-                    Gestão de Projetos <br/> Braga Marmoraria
-                  </h1>
-                </div>
+                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto object-contain shrink-0" />
+                <h1 className="text-[11px] font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
+                  Braga Marmoraria
+                </h1>
               </div>
             )}
             {isCollapsed && (
-               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-8 h-auto object-contain shrink-0" />
+               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-6 h-auto object-contain shrink-0" />
             )}
             <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden md:block p-1.5 text-stone-400 hover:text-gold transition-all">
               {isCollapsed ? <PanelLeft size={18}/> : <PanelLeftClose size={18}/>}
@@ -131,6 +130,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           <nav className="flex-1 px-3 space-y-1 overflow-y-auto no-scrollbar">
             <SidebarLink to="/app/dashboard" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/app/dashboard'} isCollapsed={isCollapsed} />
             <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
+            <SidebarLink to="/app/catalogo" icon={Library} label="Catálogo" active={location.pathname === '/app/catalogo'} isCollapsed={isCollapsed} />
             <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
             <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
             <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
@@ -146,7 +146,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             <SidebarLink to="/app/configuracoes" icon={Settings} label="Ajustes" active={location.pathname === '/app/configuracoes'} isCollapsed={isCollapsed} />
             
             <div className="pt-2 md:pt-6 px-2">
-               <button onClick={() => onOpenImport()} className={`w-full flex items-center gap-3 px-3 py-2.5 md:py-3 rounded-xl bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-stone-900 dark:text-gold hover:bg-stone-100 transition-all ${isCollapsed ? 'justify-center' : ''}`}>
+               <button onClick={() => onOpenImport()} className={`hidden w-full flex items-center gap-3 px-3 py-2.5 md:py-3 rounded-xl bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-stone-900 dark:text-gold hover:bg-stone-100 transition-all ${isCollapsed ? 'justify-center' : ''}`}>
                  <Sparkles size={18} className="shrink-0" />
                  {!isCollapsed && <span className="text-[9px] font-bold uppercase tracking-widest">Sincronia IA</span>}
                </button>
@@ -176,8 +176,8 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-        <header className="flex items-center justify-between p-4 bg-white dark:bg-onyx border-b border-stone-200 dark:border-white/5 shrink-0 z-10">
+      <main className="flex-1 flex flex-col min-w-0 relative">
+        <header className="sticky top-0 flex items-center justify-between p-4 bg-white/90 backdrop-blur dark:bg-onyx/90 border-b border-stone-200 dark:border-white/5 shrink-0 z-50">
           <div className="flex items-center gap-2">
             <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2 text-stone-600 dark:text-gold hover:bg-stone-50 rounded-lg transition-all"><PanelLeft size={24} /></button>
             {!isMainTab && (
@@ -185,15 +185,15 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             )}
             <button onClick={() => navigate('/app/dashboard')} className="hidden md:flex p-2.5 text-stone-500 hover:text-stone-950 dark:text-stone-400 transition-all border border-stone-200 dark:border-white/5 rounded-xl items-center gap-2 bg-white dark:bg-white/5"><Home size={16} /><span className="text-[9px] font-bold uppercase tracking-widest">Início</span></button>
           </div>
-          <div className="flex items-center gap-2 md:gap-3">
-            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto object-contain shrink-0" />
-            <h1 className="text-[9px] md:text-sm font-bold tracking-tight text-stone-950 dark:text-white uppercase leading-tight">
-              Gestão de Projetos <br/> Braga Marmoraria
+          <div className="flex items-center gap-2 md:gap-3 px-2">
+            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-6 md:h-8 w-auto object-contain shrink-0" />
+            <h1 className="text-[9px] md:text-sm font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
+              Braga Marmoraria
             </h1>
           </div>
         </header>
 
-        <div className="flex-1 p-4 md:p-8 flex flex-col min-h-0 overflow-y-auto relative custom-scroll">
+        <div className="flex-1 p-4 md:p-8 flex flex-col relative w-full">
           <AnimatePresence mode="wait">
             <motion.div key={location.pathname} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="h-full">
               {children}
@@ -274,7 +274,27 @@ const AppContent = () => {
   };
 
   const ProtectedRoute = ({ children, permission }: { children: React.ReactNode, permission?: keyof AppUser['permissions'] }) => {
-    const { loginAsGuest } = useAuth();
+    const { loginWithRole, loginAsGuest } = useAuth();
+    const [loginName, setLoginName] = useState('Braga');
+    const [loginPin, setLoginPin] = useState('');
+    const [isClientMode, setIsClientMode] = useState(false);
+
+    const TEAM_MEMBERS_CREDENTIALS = [
+      { name: 'Braga', role: 'ADMIN', pin: '10001' },
+      { name: 'Jamile', role: 'MANAGER', pin: '20002' },
+      { name: 'Silvio', role: 'TEAM_MEMBER', pin: '30003' },
+      { name: 'Marcos', role: 'TEAM_MEMBER', pin: '30004' },
+      { name: 'Rafael', role: 'PARTNER', pin: '40001' },
+      { name: 'Léo', role: 'TEAM_MEMBER', pin: '50001' },
+      { name: 'Pedro', role: 'TEAM_MEMBER', pin: '50002' },
+      { name: 'Rafa', role: 'TEAM_MEMBER', pin: '50003' },
+      { name: 'Danilo', role: 'TEAM_MEMBER', pin: '60001' },
+      { name: 'Vitor', role: 'TEAM_MEMBER', pin: '70001' },
+      { name: 'Sr Vicente', role: 'TEAM_MEMBER', pin: '70002' },
+      { name: 'Edivaldo', role: 'TEAM_MEMBER', pin: '70003' },
+      { name: 'Edson', role: 'PARTNER', pin: '80001' }
+    ];
+
     if (loading) return (
       <div className="min-h-screen flex items-center justify-center bg-ivory dark:bg-onyx">
         <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full" />
@@ -284,40 +304,89 @@ const AppContent = () => {
     if (!user) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-ivory dark:bg-onyx p-4">
-          <div className="max-w-md w-full bg-white dark:bg-onyx p-10 rounded-[3rem] border border-stone-200 dark:border-white/10 shadow-2xl text-center space-y-8">
-            <div className="w-20 h-20 bg-gold/10 text-gold rounded-full flex items-center justify-center mx-auto">
-              <Sparkles size={40} />
+          <div className="max-w-md w-full bg-white dark:bg-onyx p-10 rounded-[3rem] border border-stone-200 dark:border-white/10 shadow-2xl space-y-8">
+            <div className="text-center space-y-2">
+               <div className="w-20 h-20 bg-stone-950 text-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                 <Sparkles size={32} />
+               </div>
+              <h2 className="text-3xl font-serif font-bold text-stone-950 dark:text-white uppercase tracking-tight">Braga Marmoraria</h2>
+              <p className="text-xs text-stone-500 dark:text-stone-400 font-bold uppercase tracking-widest">Acesso Restrito</p>
             </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-serif font-bold text-stone-950 dark:text-white uppercase tracking-tight">Atelier Braga</h2>
-              <p className="text-xs text-stone-500 dark:text-stone-400 font-bold uppercase tracking-widest">Acesse sua jornada de artesania</p>
-            </div>
-            <div className="space-y-4">
-              <button 
-                onClick={login}
-                className="w-full py-4 gold-bg text-black rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 hover:scale-105 transition-all"
-              >
-                <LogIn size={18} />
-                Entrar com Google
-              </button>
+
+            <div className="space-y-5">
+               <div className="flex bg-stone-100 dark:bg-white/5 rounded-2xl p-1">
+                  <button onClick={() => { setIsClientMode(false); setLoginName('Braga'); setLoginPin(''); }} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${!isClientMode ? 'bg-white shadow-sm text-stone-900' : 'text-stone-500'}`}>Sou Equipe</button>
+                  <button onClick={() => { setIsClientMode(true); setLoginName(''); setLoginPin(''); }} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${isClientMode ? 'bg-white shadow-sm text-stone-900' : 'text-stone-500'}`}>Sou Cliente</button>
+               </div>
+
+               {!isClientMode ? (
+                 <>
+                   <div>
+                     <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Quem está acessando?</label>
+                     <select 
+                       value={loginName}
+                       onChange={e => setLoginName(e.target.value)}
+                       className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-sm focus:border-gold outline-none"
+                     >
+                       {TEAM_MEMBERS_CREDENTIALS.map(m => (
+                         <option key={m.name} value={m.name}>{m.name} ({m.role === 'ADMIN' ? 'Diretoria' : m.role === 'MANAGER' ? 'Comercial' : 'Operacional'})</option>
+                       ))}
+                     </select>
+                   </div>
+                 </>
+               ) : (
+                 <div>
+                   <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Seu Nome Completo</label>
+                   <input 
+                     type="text" 
+                     value={loginName}
+                     onChange={e => setLoginName(e.target.value)}
+                     className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-sm focus:border-gold outline-none"
+                     placeholder="Ex: João Vitor"
+                   />
+                 </div>
+               )}
+
+               <div>
+                 <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Código de 5 Dígitos (PIN)</label>
+                 <input 
+                   type="password" 
+                   maxLength={5}
+                   value={loginPin}
+                   onChange={e => setLoginPin(e.target.value.replace(/\D/g, ''))}
+                   className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-center text-xl font-bold tracking-widest focus:border-gold outline-none"
+                   placeholder="•••••"
+                 />
+               </div>
+
               <button 
                 onClick={async () => {
+                  if (loginPin.length !== 5) return alert('O código (PIN) deve ter exatamente 5 dígitos numéricos.');
+                  if (!loginName) return alert('Informe ou selecione seu nome.');
+                  
+                  let assignedRole = 'CLIENT';
+
+                  if (!isClientMode) {
+                     const memberConfig = TEAM_MEMBERS_CREDENTIALS.find(m => m.name === loginName);
+                     if (!memberConfig) return alert('Usuário inválido.');
+                     if (memberConfig.pin !== loginPin) return alert('Código/PIN incorreto para este usuário!');
+                     assignedRole = memberConfig.role;
+                  } else {
+                     // In the future, validate client PIN with Supabase record
+                     console.log("Client login with PIN", loginPin);
+                  }
+
                   try {
-                    await loginAsGuest();
+                    await loginWithRole(loginName, assignedRole as any);
                   } catch (err: any) {
-                    console.error('Guest login error:', err);
-                    alert(err.message || 'Erro ao entrar como convidado.');
+                    alert(err.message || 'Erro ao entrar.');
                   }
                 }}
-                className="w-full py-4 bg-stone-100 dark:bg-white/5 text-stone-600 dark:text-stone-400 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 gold-bg text-black rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 hover:scale-105 transition-all"
               >
-                <User size={18} />
-                Entrar como Convidado (Demo)
+                <LogIn size={16} /> Validar Acesso
               </button>
             </div>
-            <p className="text-[9px] text-stone-400 uppercase tracking-widest">
-              Acesso rápido para demonstração sem login
-            </p>
           </div>
         </div>
       );
@@ -338,6 +407,7 @@ const AppContent = () => {
         <Route path="/" element={<EntryPage />} />
         <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/vendas" element={<ProtectedRoute permission="canViewFinancials"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SalesFlow /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/catalogo" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><CatalogModule /></AppLayout></ProtectedRoute>} />
         <Route path="/app/projetos-lista" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectListModule /></AppLayout></ProtectedRoute>} />
         <Route path="/app/projetos-detalhe/:id" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectSupabaseDetail /></AppLayout></ProtectedRoute>} />
         <Route path="/app/projetos" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><KanbanBoard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
@@ -354,7 +424,67 @@ const AppContent = () => {
         <Route path="/client/:id" element={<ClientView projects={activeProjects} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {isImportOpen && <ImportCenter onImport={() => {}} onClose={() => setIsImportOpen(false)} />}
+      {isImportOpen && <ImportCenter onImport={async (data) => {
+        try {
+          const areaInfo = data.endereco_obra || 'N/D';
+          const nameInfo = data.nome_cliente ? `Projeto ${data.nome_cliente}` : 'Projeto Importado';
+          
+          const teamAllocation = `
+---
+EQUIPE ALOCADA AUTOMATICAMENTE (IA):
+• Vendas: Jamile, Braga
+• Medidores: Léo, Pedro, Rafa, Braga
+• Conferentes: Léo, Pedro
+• Serrador: Danilo
+• Acabadores: Vitor, Sr Vicente, Edivaldo
+• Instalador: Edson
+• Ajudantes: Silvio, Marcos
+• Motorista: Rafael
+• Compradores: Braga, Jamile`;
+
+          const supabasePayload: any = {
+            name: nameInfo,
+            client_name: data.nome_cliente || 'N/D',
+            type: data.tipo_projeto || 'Geral',
+            area: areaInfo,
+            address: areaInfo,
+            description: (data.materiais_mencionados ? `Materiais: ${data.materiais_mencionados}\n` : '') + 
+                         (data.prazos_estimados ? `Prazos: ${data.prazos_estimados}\n` : '') +
+                         (data.observacoes_tecnicas ? `Obs: ${data.observacoes_tecnicas}\n` : '') +
+                         (data.valor_total ? `Valor: R$ ${data.valor_total}\n` : '') +
+                         teamAllocation,
+            status: 'AGUARDANDO_MEDICAO',
+            timeline: [
+              { label: 'Lead', completed: true },
+              { label: 'Medição', completed: false },
+              { label: 'Corte', completed: false },
+              { label: 'Acabamento', completed: false },
+              { label: 'Instalação', completed: false }
+            ],
+            audit_logs: [{
+              id: Math.random().toString(36).substr(2, 9),
+              action: 'Projeto importado e equipe técnica alocada via IA',
+              user: 'Sistema IA',
+              device: 'Nuvem',
+              date: new Date().toLocaleString('pt-BR')
+            }]
+          };
+
+          // try to add to supabase table
+          try {
+            const { supabaseProjectService } = await import('./services/supabaseProjectService');
+            await supabaseProjectService.createProject(supabasePayload);
+          } catch(e) { console.error("Supabase fail", e); } 
+
+          setIsImportOpen(false);
+          alert('Projeto criado e equipe alocada com sucesso!');
+          navigate('/app/projetos-lista');
+          // Force reload to fetch new data from Supabase if not using realtime
+          setTimeout(() => window.location.reload(), 500);
+        } catch (error) {
+          alert('Erro ao criar projeto: ' + error);
+        }
+      }} onClose={() => setIsImportOpen(false)} />}
     </>
   );
 };

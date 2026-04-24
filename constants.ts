@@ -12,13 +12,19 @@ export const STAGES: { id: ProjectStatus; label: string; description: string }[]
 ];
 
 export const MOCK_TEAM: TeamMember[] = [
-  { id: 'tm1', name: 'Roberto Silva', role: 'Mestre Marmorista', email: 'roberto@obrapositiva.com', phone: '(11) 91234-5678', avatar: 'https://i.pravatar.cc/150?u=tm1', workload: 85, activeProjects: 4 },
-  { id: 'tm2', name: 'Ana Paula', role: 'Projetista Senior', email: 'ana@obrapositiva.com', phone: '(11) 92345-6789', avatar: 'https://i.pravatar.cc/150?u=tm2', workload: 40, activeProjects: 2 },
-  { id: 'tm3', name: 'Sandro Tech', role: 'Instalador Líder', email: 'sandro@obrapositiva.com', phone: '(11) 93456-7890', avatar: 'https://i.pravatar.cc/150?u=tm3', workload: 95, activeProjects: 5 },
-  { id: 'tm4', name: 'Carla Dias', role: 'Medidora Laser', email: 'carla@obrapositiva.com', phone: '(11) 94567-8901', avatar: 'https://i.pravatar.cc/150?u=tm4', workload: 20, activeProjects: 1 },
-  { id: 'tm5', name: 'Marcos V.', role: 'Especialista CNC', email: 'marcos@obrapositiva.com', phone: '(11) 95678-9012', avatar: 'https://i.pravatar.cc/150?u=tm5', workload: 65, activeProjects: 3 },
-  { id: 'tm6', name: 'Leandro Santos', role: 'Instalador', email: 'leandro@obrapositiva.com', phone: '(11) 96789-0123', avatar: 'https://i.pravatar.cc/150?u=tm6', workload: 50, activeProjects: 2 },
-  { id: 'tm7', name: 'Gabriel Lima', role: 'Auxiliar Técnico', email: 'gabriel@obrapositiva.com', phone: '(11) 97890-1234', avatar: 'https://i.pravatar.cc/150?u=tm7', workload: 30, activeProjects: 1 },
+  { id: 'tm1', name: 'Braga', role: 'Diretoria', email: 'braga@bragamarmoraria.com', phone: '(11) 90000-0001', avatar: 'https://i.pravatar.cc/150?u=brn', workload: 85, activeProjects: 4 },
+  { id: 'tm2', name: 'Jamile', role: 'Comercial', email: 'jamile@bragamarmoraria.com', phone: '(11) 90000-0002', avatar: 'https://i.pravatar.cc/150?u=jml', workload: 90, activeProjects: 12 },
+  { id: 'tm3', name: 'Léo', role: 'Medidor / Conferente', email: 'leo@bragamarmoraria.com', phone: '(11) 90000-0003', avatar: 'https://i.pravatar.cc/150?u=leo', workload: 80, activeProjects: 5 },
+  { id: 'tm4', name: 'Pedro', role: 'Medidor / Conferente', email: 'pedro@bragamarmoraria.com', phone: '(11) 90000-0004', avatar: 'https://i.pravatar.cc/150?u=pdr', workload: 70, activeProjects: 3 },
+  { id: 'tm5', name: 'Rafa', role: 'Medidor', email: 'rafa@bragamarmoraria.com', phone: '(11) 90000-0005', avatar: 'https://i.pravatar.cc/150?u=raf', workload: 60, activeProjects: 2 },
+  { id: 'tm6', name: 'Danilo', role: 'Serrador', email: 'danilo@bragamarmoraria.com', phone: '(11) 90000-0006', avatar: 'https://i.pravatar.cc/150?u=dnl', workload: 95, activeProjects: 6 },
+  { id: 'tm7', name: 'Vitor', role: 'Acabador', email: 'vitor@bragamarmoraria.com', phone: '(11) 90000-0007', avatar: 'https://i.pravatar.cc/150?u=vtr', workload: 85, activeProjects: 4 },
+  { id: 'tm8', name: 'Sr Vicente', role: 'Acabador', email: 'vicente@bragamarmoraria.com', phone: '(11) 90000-0008', avatar: 'https://i.pravatar.cc/150?u=vct', workload: 100, activeProjects: 5 },
+  { id: 'tm9', name: 'Edivaldo', role: 'Acabador', email: 'edivaldo@bragamarmoraria.com', phone: '(11) 90000-0009', avatar: 'https://i.pravatar.cc/150?u=edv', workload: 90, activeProjects: 4 },
+  { id: 'tm10', name: 'Edson', role: 'Instalador', email: 'edson@bragamarmoraria.com', phone: '(11) 90000-0010', avatar: 'https://i.pravatar.cc/150?u=eds', workload: 100, activeProjects: 8 },
+  { id: 'tm11', name: 'Silvio', role: 'Ajudante', email: 'silvio@bragamarmoraria.com', phone: '(11) 90000-0011', avatar: 'https://i.pravatar.cc/150?u=slv', workload: 60, activeProjects: 3 },
+  { id: 'tm12', name: 'Marcos', role: 'Ajudante', email: 'marcos@bragamarmoraria.com', phone: '(11) 90000-0012', avatar: 'https://i.pravatar.cc/150?u=mrc', workload: 60, activeProjects: 3 },
+  { id: 'tm13', name: 'Rafael', role: 'Motorista', email: 'rafael@bragamarmoraria.com', phone: '(11) 90000-0013', avatar: 'https://i.pravatar.cc/150?u=rfl', workload: 75, activeProjects: 10 },
 ];
 
 export const MOCK_PARTNERS: Partner[] = [

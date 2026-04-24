@@ -773,7 +773,11 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
       <AnimatePresence>
         {selectedProject && <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProject(null)} updateProject={updateProject} />}
         <AlertsModal isOpen={isAlertsModalOpen} onClose={() => setIsAlertsModalOpen(false)} notifications={notifications} onCompleteTask={handleCompleteTask} onNavigate={handleNavigate} googleAuth={googleAuth} />
-        <SmartProjectModal isOpen={isSmartModalOpen} onClose={() => setIsSmartModalOpen(false)} onProjectCreated={(p) => { addProject?.(p); setSelectedProject(p); }} />
+        <SmartProjectModal isOpen={isSmartModalOpen} onClose={() => setIsSmartModalOpen(false)} onProjectCreated={(p) => { 
+          addProject?.(p); 
+          setSelectedProject(p);
+          navigate('/app/projetos');
+        }} />
         <AreaProjectsModal isOpen={!!selectedArea} onClose={() => setSelectedArea(null)} areaName={selectedArea || ''} projects={projectsByArea} onNavigate={handleNavigate} />
         <InboxModal isOpen={isInboxModalOpen} onClose={() => setIsInboxModalOpen(false)} googleAuth={googleAuth} />
       </AnimatePresence>

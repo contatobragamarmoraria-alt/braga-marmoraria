@@ -1,42 +1,36 @@
-name: Build & Deploy Braga Marmoraria
+name: Deploy Braga Marmoraria to Hostinger
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main # Ou a sua branch principal (ex: master)
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Fix vulnerabilities safely
-        run: npm audit fix || true
-
-      - name: Run audit (non-blocking)
-        run: npm audit || true
-
-      - name: Build project
+      - name: Build Project
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Verify dist output
-        run: |
-          echo "=== Build Output ==="
-          ls -la dist/
-          echo "=== Assets ==="
-          ls -la dist/assets/
-          echo "=== .htaccess present ==="
-          test -f dist/.htaccess && echo "OK" || echo "MISSING"
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./ # Geralmente a pasta raiz ou public_html na Hostinger
