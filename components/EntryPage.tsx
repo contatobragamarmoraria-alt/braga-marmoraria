@@ -52,7 +52,7 @@ const EntryPage: React.FC = () => {
         <img 
           src="/logo.png.jpg" 
           alt="Braga Marmoraria" 
-          className="w-48 md:w-64 h-auto object-contain mb-8" 
+          className="w-48 md:w-64 h-auto object-contain mb-8 transition-transform rotate-[35deg]" 
         />
 
         <div className="w-full space-y-6">
