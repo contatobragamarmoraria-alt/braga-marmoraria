@@ -9,6 +9,9 @@ import fs from 'fs/promises';
 
 dotenv.config();
 
+// Forçar ambiente de produção para a Hostinger
+process.env.NODE_ENV = 'production';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
