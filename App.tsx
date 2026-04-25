@@ -129,23 +129,23 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           </div>
 
           <nav className="flex-1 px-3 space-y-1 overflow-y-auto no-scrollbar">
-            {user?.role !== 'CLIENT' && (
+            {user && user.role !== 'CLIENT' && (
               <>
                 <SidebarLink to="/app/dashboard" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/app/dashboard'} isCollapsed={isCollapsed} />
-                {(user?.permissions.canViewFinancials) && (
+                {(user.permissions?.canViewFinancials) && (
                   <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
                 )}
                 <SidebarLink to="/app/catalogo" icon={Library} label="Catálogo" active={location.pathname === '/app/catalogo'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
-                {(user?.permissions.canViewOccurrences) && (
+                {(user.permissions?.canViewOccurrences) && (
                   <SidebarLink to="/app/historico" icon={History} label="Histórico" active={location.pathname === '/app/historico'} isCollapsed={isCollapsed} />
                 )}
-                {(user?.permissions.canViewCalendar) && (
+                {(user.permissions?.canViewCalendar) && (
                   <SidebarLink to="/app/calendario" icon={Calendar} label="Calendário" active={location.pathname === '/app/calendario'} isCollapsed={isCollapsed} />
                 )}
-                {(user?.permissions.canDeleteProjects) && (
+                {(user.permissions?.canDeleteProjects) && (
                   <SidebarLink to="/app/lixeira" icon={Trash2} label="Lixeira" active={location.pathname === '/app/lixeira'} isCollapsed={isCollapsed} />
                 )}
                 <SidebarLink to="/app/whatsapp" icon={MessageSquare} label="WhatsApp" active={location.pathname === '/app/whatsapp'} isCollapsed={isCollapsed} />
@@ -312,7 +312,17 @@ const AppContent = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={user?.role === 'CLIENT' ? <Navigate to="/app/portal-do-cliente" replace /> : <Navigate to="/app/dashboard" replace />} />
+        <Route path="/" element={
+          loading ? (
+            <div className="min-h-screen flex items-center justify-center bg-ivory dark:bg-onyx">
+              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full" />
+            </div>
+          ) : user?.role === 'CLIENT' ? (
+            <Navigate to="/app/portal-do-cliente" replace />
+          ) : (
+            <Navigate to="/app/dashboard" replace />
+          )
+        } />
         <Route path="/app/dashboard" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/vendas" element={<ProtectedRoute permission="canViewFinancials"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SalesFlow /></AppLayout></ProtectedRoute>} />
         <Route path="/app/catalogo" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><CatalogModule /></AppLayout></ProtectedRoute>} />
