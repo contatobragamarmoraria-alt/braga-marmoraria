@@ -329,60 +329,56 @@ const AppContent = () => {
       {isImportOpen && <ImportCenter onImport={async (data) => {
         try {
           const areaInfo = data.endereco_obra || 'N/D';
-          const nameInfo = data.nome_cliente ? `Projeto ${data.nome_cliente}` : 'Projeto Importado';
+          const nameInfo = data.nome_cliente ? `Projeto ${data.nome_cliente}` : 'Novo Projeto Importado';
           
-          const teamAllocation = `
----
-EQUIPE ALOCADA AUTOMATICAMENTE (IA):
-• Vendas: Jamile, Braga
-• Medidores: Léo, Pedro, Rafa, Braga
-• Conferentes: Léo, Pedro
-• Serrador: Danilo
-• Acabadores: Vitor, Sr Vicente, Edivaldo
-• Instalador: Edson
-• Ajudantes: Silvio, Marcos
-• Motorista: Rafael
-• Compradores: Braga, Jamile`;
-
-          const supabasePayload: any = {
-            name: nameInfo,
-            client_name: data.nome_cliente || 'N/D',
-            type: data.tipo_projeto || 'Geral',
-            area: areaInfo,
-            address: areaInfo,
-            description: (data.materiais_mencionados ? `Materiais: ${data.materiais_mencionados}\n` : '') + 
-                         (data.prazos_estimados ? `Prazos: ${data.prazos_estimados}\n` : '') +
-                         (data.observacoes_tecnicas ? `Obs: ${data.observacoes_tecnicas}\n` : '') +
-                         (data.valor_total ? `Valor: R$ ${data.valor_total}\n` : '') +
-                         teamAllocation,
+          const newProject: Project = {
+            id: 'IMP-' + Math.random().toString(36).substr(2, 9),
+            clientName: data.nome_cliente || 'Cliente Identificado por IA',
+            clientEmail: '',
+            phone: '',
+            projectType: data.tipo_projeto || 'Marmoraria',
+            concept: data.observacoes_tecnicas || 'Dados extraídos automaticamente via Sincronia IA.',
+            value: parseFloat((data.valor_total || '0').replace(/[^\d.,]/g, '').replace(',', '.')) || 0,
+            paymentMethod: 'A definir',
+            startDate: new Date().toISOString().split('T')[0],
+            estimatedDelivery: data.prazos_estimados || 'A definir',
             status: 'AGUARDANDO_MEDICAO',
-            timeline: [
-              { label: 'Lead', completed: true },
-              { label: 'Medição', completed: false },
-              { label: 'Corte', completed: false },
-              { label: 'Acabamento', completed: false },
-              { label: 'Instalação', completed: false }
+            progress: 10,
+            responsible: user?.name || 'Braga',
+            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
+            materials: (data.materiais_mencionados || '').split(',').map((m: string) => m.trim()),
+            detailedScope: [
+              {
+                title: "Escopo Extraído",
+                items: [
+                  `Materiais: ${data.materiais_mencionados || 'Ver documento'}`,
+                  `Endereço: ${areaInfo}`,
+                  `Observações: ${data.observacoes_tecnicas || 'Nenhuma'}`
+                ]
+              }
             ],
-            audit_logs: [{
-              id: Math.random().toString(36).substr(2, 9),
-              action: 'Projeto importado e equipe técnica alocada via IA',
-              user: 'Sistema IA',
-              device: 'Nuvem',
-              date: new Date().toLocaleString('pt-BR')
-            }]
+            history: [
+              {
+                id: 'h-' + Date.now(),
+                date: new Date().toISOString(),
+                user: user?.name || 'Sistema',
+                action: 'Projeto criado via Sincronia IA (PDF/Áudio)'
+              }
+            ],
+            tasks: [
+              { id: 't1', title: 'Conferir dados extraídos pela IA', completed: false, category: 'TECNICO' },
+              { id: 't2', title: 'Marcar Medição Técnica', completed: false, category: 'TECNICO' }
+            ],
+            timeline: [],
+            documents: []
           };
 
-          // try to add to supabase table
-          try {
-            const { supabaseProjectService } = await import('./services/supabaseProjectService');
-            await supabaseProjectService.createProject(supabasePayload);
-          } catch(e) { console.error("Supabase fail", e); } 
-
+          // Save to server and update local state
+          await addProject(newProject);
+          
           setIsImportOpen(false);
-          alert('Projeto criado e equipe alocada com sucesso!');
+          alert('Projeto "' + nameInfo + '" criado com sucesso!');
           navigate('/app/projetos-lista');
-          // Force reload to fetch new data from Supabase if not using realtime
-          setTimeout(() => window.location.reload(), 500);
         } catch (error) {
           alert('Erro ao criar projeto: ' + error);
         }
