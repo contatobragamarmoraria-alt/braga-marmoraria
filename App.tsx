@@ -129,17 +129,30 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           </div>
 
           <nav className="flex-1 px-3 space-y-1 overflow-y-auto no-scrollbar">
-            <SidebarLink to="/app/dashboard" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/app/dashboard'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/catalogo" icon={Library} label="Catálogo" active={location.pathname === '/app/catalogo'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/historico" icon={History} label="Histórico" active={location.pathname === '/app/historico'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/calendario" icon={Calendar} label="Calendário" active={location.pathname === '/app/calendario'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/lixeira" icon={Trash2} label="Lixeira" active={location.pathname === '/app/lixeira'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/whatsapp" icon={MessageSquare} label="WhatsApp" active={location.pathname === '/app/whatsapp'} isCollapsed={isCollapsed} />
-            <SidebarLink to="/app/conversas" icon={MessageSquare} label="Conversas" active={location.pathname === '/app/conversas'} isCollapsed={isCollapsed} />
+            {user?.role !== 'CLIENT' && (
+              <>
+                <SidebarLink to="/app/dashboard" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/app/dashboard'} isCollapsed={isCollapsed} />
+                {(user?.permissions.canViewFinancials) && (
+                  <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
+                )}
+                <SidebarLink to="/app/catalogo" icon={Library} label="Catálogo" active={location.pathname === '/app/catalogo'} isCollapsed={isCollapsed} />
+                <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
+                <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
+                <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
+                {(user?.permissions.canViewOccurrences) && (
+                  <SidebarLink to="/app/historico" icon={History} label="Histórico" active={location.pathname === '/app/historico'} isCollapsed={isCollapsed} />
+                )}
+                {(user?.permissions.canViewCalendar) && (
+                  <SidebarLink to="/app/calendario" icon={Calendar} label="Calendário" active={location.pathname === '/app/calendario'} isCollapsed={isCollapsed} />
+                )}
+                {(user?.permissions.canDeleteProjects) && (
+                  <SidebarLink to="/app/lixeira" icon={Trash2} label="Lixeira" active={location.pathname === '/app/lixeira'} isCollapsed={isCollapsed} />
+                )}
+                <SidebarLink to="/app/whatsapp" icon={MessageSquare} label="WhatsApp" active={location.pathname === '/app/whatsapp'} isCollapsed={isCollapsed} />
+                <SidebarLink to="/app/conversas" icon={MessageSquare} label="Conversas" active={location.pathname === '/app/conversas'} isCollapsed={isCollapsed} />
+              </>
+            )}
+            
             <SidebarLink to="/app/portal-do-cliente" icon={Compass} label="Portal Cliente" active={location.pathname === '/app/portal-do-cliente'} isCollapsed={isCollapsed} />
             <SidebarLink to="/app/perfil" icon={User} label="Meu Perfil" active={location.pathname === '/app/perfil'} isCollapsed={isCollapsed} />
 
@@ -299,19 +312,19 @@ const AppContent = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
+        <Route path="/" element={user?.role === 'CLIENT' ? <Navigate to="/app/portal-do-cliente" replace /> : <Navigate to="/app/dashboard" replace />} />
+        <Route path="/app/dashboard" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/vendas" element={<ProtectedRoute permission="canViewFinancials"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SalesFlow /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/catalogo" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><CatalogModule /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/projetos-lista" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectListModule /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/projetos-detalhe/:id" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectSupabaseDetail /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/projetos" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><KanbanBoard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/proprietarios" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientsList projects={activeProjects} onDelete={deleteProject} /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/catalogo" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><CatalogModule /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/projetos-lista" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectListModule /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/projetos-detalhe/:id" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectSupabaseDetail /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/projetos" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><KanbanBoard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/proprietarios" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientsList projects={activeProjects} onDelete={deleteProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/historico" element={<ProtectedRoute permission="canViewOccurrences"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><OccurrenceHistory /></AppLayout></ProtectedRoute>} />
         <Route path="/app/calendario" element={<ProtectedRoute permission="canViewCalendar"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><GlobalCalendar projects={activeProjects} /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/whatsapp" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><WhatsAppMirror projects={activeProjects} onGenerateProject={addProject} /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/conversas" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ConversationSummarizer projects={activeProjects} updateProject={updateProject} /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/configuracoes" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SettingsPage /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/whatsapp" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><WhatsAppMirror projects={activeProjects} onGenerateProject={addProject} /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/conversas" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ConversationSummarizer projects={activeProjects} updateProject={updateProject} /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/configuracoes" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SettingsPage /></AppLayout></ProtectedRoute>} />
         <Route path="/app/perfil" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><UserProfile user={user!} onUpdate={(u) => {/* trigger update if needed */}} onLogout={logout} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/portal-do-cliente" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientPortal user={user!} projects={activeProjects} onNavigate={(tab, id) => navigate(id ? `/project/${id}` : `/app/${tab}`)} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/lixeira" element={<ProtectedRoute permission="canDeleteProjects"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Trash projects={projects} onRestore={restoreProject} onDeletePermanent={deletePermanent} /></AppLayout></ProtectedRoute>} />
