@@ -583,7 +583,7 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
             initial={{ opacity: 0, height: 0, marginTop: 0, scale: 0.95 }}
             animate={{ opacity: 1, height: 'auto', marginTop: 16, scale: 1 }}
             exit={{ opacity: 0, height: 0, scale: 0.95, overflow: 'hidden' }}
-            className="bg-stone-950 dark:bg-white/5 text-white p-6 md:p-8 rounded-[2.5rem] relative shrink-0 shadow-xl"
+            className="bg-stone-950 dark:bg-white/5 text-white p-5 md:p-6 rounded-[2rem] relative shrink-0 shadow-sm"
             style={{ overflow: 'hidden' }}
           >
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
@@ -654,8 +654,8 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
         <div className="flex flex-col gap-4 h-full">
-            <div className="bg-white dark:bg-white/5 p-5 rounded-[2rem] border border-stone-100 dark:border-white/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col h-[180px] shrink-0">
-              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Previsão Semestral</h4>
+            <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col h-[180px] shrink-0">
+              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Previsão Semestral</h4>
               <div className="flex-1">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={revenueForecastData}>
@@ -671,8 +671,8 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
                 </ResponsiveContainer>
               </div>
            </div>
-           <div className="bg-white dark:bg-white/5 p-5 rounded-[2rem] border border-stone-100 dark:border-white/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col flex-1 min-h-[300px]">
-              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Distribuição por Área</h4>
+           <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col flex-1 min-h-[300px]">
+              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Distribuição por Área</h4>
               <div className="flex-1">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -701,8 +701,8 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
         </div>
 
         <div className="flex flex-col gap-4 h-full">
-            <div className="bg-white dark:bg-white/5 p-5 rounded-[2rem] border border-stone-100 dark:border-white/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col cursor-pointer hover:border-gold/30 shrink-0 transition-all" onClick={() => setIsAlertsModalOpen(true)}>
-               <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Alertas de Cronograma</h4>
+            <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col cursor-pointer hover:border-gold/30 shrink-0 transition-all" onClick={() => setIsAlertsModalOpen(true)}>
+               <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Alertas de Cronograma</h4>
                <div className="flex-1 grid grid-cols-4 gap-2">
                   <div className="p-2 bg-red-50 dark:bg-red-950/20 rounded-xl flex flex-col items-center justify-center text-center">
                     <span className="text-lg font-serif font-bold text-red-800 dark:text-red-400">{alertCounts.overdue}</span>
@@ -722,9 +722,8 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
                   </div>
                </div>
             </div>
-
-            <div className="bg-white dark:bg-white/5 p-5 rounded-[2rem] border border-stone-100 dark:border-white/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col cursor-pointer hover:border-gold/30 shrink-0 transition-all" onClick={() => navigate('/app/historico')}>
-               <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Ocorrências Recentes</h4>
+            <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col cursor-pointer hover:border-gold/30 shrink-0 transition-all" onClick={() => navigate('/app/historico')}>
+               <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Ocorrências Recentes</h4>
                <div className="space-y-3 lg:overflow-y-auto lg:max-h-[120px] custom-scroll pr-2">
                  {occurrences.slice(0, 4).map(occ => (
                    <div key={occ.id} className="flex items-center gap-3">
@@ -741,9 +740,8 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
                  )}
                </div>
             </div>
-
-           <div className="bg-white dark:bg-white/5 p-5 rounded-[2rem] border border-stone-100 dark:border-white/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col">
-              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Carga da Equipe</h4>
+           <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col">
+              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Carga da Equipe</h4>
               <div className="flex-1 min-h-[120px]">
                   <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={professionalWorkload} layout="vertical" margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>

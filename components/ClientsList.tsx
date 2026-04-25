@@ -20,7 +20,7 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
   return (
     <div className="space-y-6 flex flex-col h-full overflow-hidden">
       {/* Welcome Section */}
-      <div className="bg-stone-950 dark:bg-white/5 text-white p-6 rounded-[2rem] relative overflow-hidden shrink-0 shadow-lg">
+      <div className="bg-stone-950 dark:bg-white/5 text-white p-5 rounded-2xl relative overflow-hidden shrink-0 shadow-sm">
         <div className="relative z-10 flex items-center justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
         <div className="absolute top-0 right-0 w-48 h-48 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 bg-white dark:bg-onyx p-6 rounded-[2rem] border border-stone-200 dark:border-white/5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0 bg-white dark:bg-onyx p-4 rounded-2xl border border-stone-200 dark:border-white/5">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
           <input 
@@ -70,7 +70,7 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
             <div key={project.id} className="relative group">
               <Link 
                 to={`/project/${project.id}`}
-                className="block bg-white dark:bg-white/5 border border-stone-100 dark:border-white/5 rounded-2xl p-3 hover:border-gold/40 transition-all flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md min-h-[180px]"
+                className="block bg-white dark:bg-white/5 border border-stone-100 dark:border-white/5 rounded-xl p-3 hover:border-gold/40 transition-all flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md min-h-[140px]"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -133,8 +133,8 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
             </div>
           ))}
           
-          <button className="border-2 border-dashed border-stone-200 dark:border-white/5 rounded-[1.8rem] p-4 flex flex-col items-center justify-center text-stone-300 hover:border-gold hover:text-gold transition-all group min-h-[140px]">
-             <UserPlus size={20} className="mb-2 group-hover:scale-110 transition-transform" />
+          <button className="border border-dashed border-stone-200 dark:border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-stone-300 hover:border-gold hover:text-gold transition-all group min-h-[140px]">
+             <UserPlus size={16} className="mb-2 group-hover:scale-110 transition-transform" />
              <span className="text-[8px] font-bold uppercase tracking-widest">Novo Proprietário</span>
           </button>
         </div>

@@ -40,6 +40,8 @@ export interface AppUser {
   createdAt: string;
   lastLogin?: string;
   permissions: UserPermissions;
+  pin: string;
+  password?: string;
 }
 
 export type ProjectStatus = 

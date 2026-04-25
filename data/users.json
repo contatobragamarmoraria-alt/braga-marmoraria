@@ -1,12 +1,14 @@
 [
   {
-    "id": "admin-1",
-    "name": "Administrador Braga",
-    "email": "admin@braga.com",
+    "id": "tm1",
+    "name": "Braga",
+    "email": "braga@bragamarmoraria.com",
     "role": "ADMIN",
     "status": "ACTIVE",
-    "avatar": "https://ui-avatars.com/api/?name=Admin+Braga&background=D4AF37&color=fff",
+    "avatar": "https://i.pravatar.cc/150?u=brn",
     "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
     "permissions": {
       "canViewFinancials": true,
       "canViewTechnical": true,
@@ -15,6 +17,106 @@
       "canEditProjects": true,
       "canDeleteProjects": true,
       "canManageUsers": true
+    }
+  },
+  {
+    "id": "tm2",
+    "name": "Jamile",
+    "email": "jamile@bragamarmoraria.com",
+    "role": "MANAGER",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=jml",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": true,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": true,
+      "canDeleteProjects": false,
+      "canManageUsers": false
+    }
+  },
+  {
+    "id": "tm3",
+    "name": "Léo",
+    "email": "leo@bragamarmoraria.com",
+    "role": "TEAM_MEMBER",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=leo",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": false,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": false,
+      "canDeleteProjects": false,
+      "canManageUsers": false
+    }
+  },
+  {
+    "id": "tm4",
+    "name": "Pedro",
+    "email": "pedro@bragamarmoraria.com",
+    "role": "TEAM_MEMBER",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=pdr",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": false,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": false,
+      "canDeleteProjects": false,
+      "canManageUsers": false
+    }
+  },
+  {
+    "id": "tm5",
+    "name": "Rafa",
+    "email": "rafa@bragamarmoraria.com",
+    "role": "TEAM_MEMBER",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=raf",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": false,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": false,
+      "canDeleteProjects": false,
+      "canManageUsers": false
+    }
+  },
+  {
+    "id": "tm10",
+    "name": "Edson",
+    "email": "edson@bragamarmoraria.com",
+    "role": "TEAM_MEMBER",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=eds",
+    "createdAt": "2026-03-29T18:35:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": false,
+      "canViewTechnical": true,
+      "canViewCalendar": true,
+      "canViewOccurrences": true,
+      "canEditProjects": false,
+      "canDeleteProjects": false,
+      "canManageUsers": false
     }
   }
 ]

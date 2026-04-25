@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AppUser, UserPermissions } from '../types';
+import { AppUser, UserPermissions, UserRole } from '../types';
+import { userService } from '../services/userService';
 
 interface AuthContextType {
   user: AppUser | null;
@@ -10,6 +10,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
   loginAsGuest: () => Promise<void>;
   loginWithRole: (name: string, role: UserRole) => Promise<void>;
+  loginWithPin: (name: string, pin: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthReady: boolean;
 }
@@ -35,19 +36,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/status');
-        const data = await response.json();
-        
-        if (data.isAuthenticated) {
-          // If authenticated via Google, we'd ideally fetch user info here
-          // For now, we'll keep the mock/session logic but aware of the server status
-          const savedUser = localStorage.getItem('bm-local-user');
-          if (savedUser) setUser(JSON.parse(savedUser));
+        if (response.ok) {
+          const data = await response.json();
+          if (data.isAuthenticated && data.user) {
+            setUser(data.user);
+            localStorage.setItem('bm-local-user', JSON.stringify(data.user));
+          } else {
+            const savedUser = localStorage.getItem('bm-local-user');
+            if (savedUser) setUser(JSON.parse(savedUser));
+          }
         } else {
+          // API exists but returned error or not authenticated
           const savedUser = localStorage.getItem('bm-local-user');
           if (savedUser) setUser(JSON.parse(savedUser));
         }
       } catch (e) {
-        console.error('Auth check error:', e);
+        // API probably doesn't exist (static hosting)
+        console.warn('Auth API not available, using local session');
+        const savedUser = localStorage.getItem('bm-local-user');
+        if (savedUser) setUser(JSON.parse(savedUser));
       } finally {
         setLoading(false);
         setIsAuthReady(true);
@@ -64,19 +71,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginWithEmail = async (email: string, password: string) => {
-    // Mock Email Login
-    const mockUser: AppUser = {
-      id: 'email-user-' + Math.random().toString(36).substr(2, 9),
-      name: email.split('@')[0],
-      email: email,
-      role: 'ADMIN',
-      status: 'ACTIVE',
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email)}&background=random`,
-      createdAt: new Date().toISOString(),
-      permissions: ADMIN_PERMISSIONS
-    };
-    setUser(mockUser);
-    localStorage.setItem('bm-local-user', JSON.stringify(mockUser));
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setUser(data.user);
+        localStorage.setItem('bm-local-user', JSON.stringify(data.user));
+      } else {
+        throw new Error(data.error || 'Erro ao realizar login.');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const signUpWithEmail = async (email: string, password: string, name: string) => {
@@ -95,23 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const loginAsGuest = async () => {
-    setLoading(true);
-    // Simulate a small delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const guestUser: AppUser = {
-      id: 'guest-' + Math.random().toString(36).substr(2, 9),
-      name: 'Visitante (Demo)',
-      email: 'convidado@atelierbraga.com',
-      role: 'ADMIN',
-      status: 'ACTIVE',
-      avatar: '/logo.png',
-      createdAt: new Date().toISOString(),
-      permissions: ADMIN_PERMISSIONS
-    };
-    setUser(guestUser);
-    localStorage.setItem('bm-local-user', JSON.stringify(guestUser));
-    setLoading(false);
+    throw new Error('O acesso como convidado foi desativado. Por favor, use suas credenciais.');
   };
 
   const loginWithRole = async (name: string, role: UserRole) => {
@@ -143,6 +140,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false);
   };
 
+  const loginWithPin = async (name: string, pin: string) => {
+    setLoading(true);
+    try {
+      const users = await userService.getUsers();
+      const foundUser = users.find(u => u.name === name);
+
+      if (!foundUser) {
+        throw new Error('Usuário não encontrado.');
+      }
+
+      if (foundUser.pin !== pin) {
+        throw new Error('Código (PIN) incorreto.');
+      }
+
+      setUser(foundUser);
+      localStorage.setItem('bm-local-user', JSON.stringify(foundUser));
+    } catch (error: any) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setUser(null);
@@ -150,7 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, signUpWithEmail, loginAsGuest, loginWithRole, logout, isAuthReady }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithEmail, signUpWithEmail, loginAsGuest, loginWithRole, loginWithPin, logout, isAuthReady }}>
       {children}
     </AuthContext.Provider>
   );

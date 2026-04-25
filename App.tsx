@@ -31,6 +31,7 @@ import WhatsAppMirror from './components/WhatsAppMirror';
 import UserProfile from './components/UserProfile';
 import ClientPortal from './components/ClientPortal';
 import CatalogModule from './components/CatalogModule';
+import LoginPage from './components/LoginPage';
 import { MOCK_USER } from './constants';
 import { Project, AppUser } from './types';
 import { initialProjects } from './services/mockData';
@@ -110,14 +111,14 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           <div className={`px-6 mb-6 md:mb-10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
             {!isCollapsed && (
               <div className="flex items-center gap-3">
-                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
+                <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-8 md:h-10 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[-45deg]" />
                 <h1 className="text-[11px] font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
                   Braga Marmoraria
                 </h1>
               </div>
             )}
             {isCollapsed && (
-               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-6 h-6 object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
+               <img src="/logo.png.jpg" alt="Braga Marmoraria" className="w-6 h-6 object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[-45deg]" />
             )}
             <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden md:block p-1.5 text-stone-400 hover:text-gold transition-all">
               {isCollapsed ? <PanelLeft size={18}/> : <PanelLeftClose size={18}/>}
@@ -186,7 +187,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             <button onClick={() => navigate('/app/dashboard')} className="hidden md:flex p-2.5 text-stone-500 hover:text-stone-950 dark:text-stone-400 transition-all border border-stone-200 dark:border-white/5 rounded-xl items-center gap-2 bg-white dark:bg-white/5"><Home size={16} /><span className="text-[9px] font-bold uppercase tracking-widest">Início</span></button>
           </div>
           <div className="flex items-center gap-2 md:gap-3 px-2">
-            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-6 md:h-8 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[45deg]" />
+            <img src="/logo.png.jpg" alt="Braga Marmoraria" className="h-6 md:h-8 w-auto aspect-square object-cover mix-blend-multiply rounded-full shrink-0 transition-transform rotate-[-45deg]" />
             <h1 className="text-[9px] md:text-sm font-bold tracking-tight text-stone-950 dark:text-white uppercase whitespace-nowrap">
               Braga Marmoraria
             </h1>
@@ -274,26 +275,7 @@ const AppContent = () => {
   };
 
   const ProtectedRoute = ({ children, permission }: { children: React.ReactNode, permission?: keyof AppUser['permissions'] }) => {
-    const { loginWithRole, loginAsGuest } = useAuth();
-    const [loginName, setLoginName] = useState('Braga');
-    const [loginPin, setLoginPin] = useState('');
-    const [isClientMode, setIsClientMode] = useState(false);
-
-    const TEAM_MEMBERS_CREDENTIALS = [
-      { name: 'Braga', role: 'ADMIN', pin: '10001' },
-      { name: 'Jamile', role: 'MANAGER', pin: '20002' },
-      { name: 'Silvio', role: 'TEAM_MEMBER', pin: '30003' },
-      { name: 'Marcos', role: 'TEAM_MEMBER', pin: '30004' },
-      { name: 'Rafael', role: 'PARTNER', pin: '40001' },
-      { name: 'Léo', role: 'TEAM_MEMBER', pin: '50001' },
-      { name: 'Pedro', role: 'TEAM_MEMBER', pin: '50002' },
-      { name: 'Rafa', role: 'TEAM_MEMBER', pin: '50003' },
-      { name: 'Danilo', role: 'TEAM_MEMBER', pin: '60001' },
-      { name: 'Vitor', role: 'TEAM_MEMBER', pin: '70001' },
-      { name: 'Sr Vicente', role: 'TEAM_MEMBER', pin: '70002' },
-      { name: 'Edivaldo', role: 'TEAM_MEMBER', pin: '70003' },
-      { name: 'Edson', role: 'PARTNER', pin: '80001' }
-    ];
+    const { user, loading } = useAuth();
 
     if (loading) return (
       <div className="min-h-screen flex items-center justify-center bg-ivory dark:bg-onyx">
@@ -302,94 +284,7 @@ const AppContent = () => {
     );
     
     if (!user) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-ivory dark:bg-onyx p-4">
-          <div className="max-w-md w-full bg-white dark:bg-onyx p-10 rounded-[3rem] border border-stone-200 dark:border-white/10 shadow-2xl space-y-8">
-            <div className="text-center space-y-2">
-               <div className="w-20 h-20 bg-stone-950 text-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-                 <Sparkles size={32} />
-               </div>
-              <h2 className="text-3xl font-serif font-bold text-stone-950 dark:text-white uppercase tracking-tight">Braga Marmoraria</h2>
-              <p className="text-xs text-stone-500 dark:text-stone-400 font-bold uppercase tracking-widest">Acesso Restrito</p>
-            </div>
-
-            <div className="space-y-5">
-               <div className="flex bg-stone-100 dark:bg-white/5 rounded-2xl p-1">
-                  <button onClick={() => { setIsClientMode(false); setLoginName('Braga'); setLoginPin(''); }} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${!isClientMode ? 'bg-white shadow-sm text-stone-900' : 'text-stone-500'}`}>Sou Equipe</button>
-                  <button onClick={() => { setIsClientMode(true); setLoginName(''); setLoginPin(''); }} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${isClientMode ? 'bg-white shadow-sm text-stone-900' : 'text-stone-500'}`}>Sou Cliente</button>
-               </div>
-
-               {!isClientMode ? (
-                 <>
-                   <div>
-                     <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Quem está acessando?</label>
-                     <select 
-                       value={loginName}
-                       onChange={e => setLoginName(e.target.value)}
-                       className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-sm focus:border-gold outline-none"
-                     >
-                       {TEAM_MEMBERS_CREDENTIALS.map(m => (
-                         <option key={m.name} value={m.name}>{m.name} ({m.role === 'ADMIN' ? 'Diretoria' : m.role === 'MANAGER' ? 'Comercial' : 'Operacional'})</option>
-                       ))}
-                     </select>
-                   </div>
-                 </>
-               ) : (
-                 <div>
-                   <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Seu Nome Completo</label>
-                   <input 
-                     type="text" 
-                     value={loginName}
-                     onChange={e => setLoginName(e.target.value)}
-                     className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-sm focus:border-gold outline-none"
-                     placeholder="Ex: João Vitor"
-                   />
-                 </div>
-               )}
-
-               <div>
-                 <label className="text-[10px] font-bold uppercase tracking-widest text-stone-500 block mb-2">Código de 5 Dígitos (PIN)</label>
-                 <input 
-                   type="password" 
-                   maxLength={5}
-                   value={loginPin}
-                   onChange={e => setLoginPin(e.target.value.replace(/\D/g, ''))}
-                   className="w-full p-4 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10 text-center text-xl font-bold tracking-widest focus:border-gold outline-none"
-                   placeholder="•••••"
-                 />
-               </div>
-
-              <button 
-                onClick={async () => {
-                  if (loginPin.length !== 5) return alert('O código (PIN) deve ter exatamente 5 dígitos numéricos.');
-                  if (!loginName) return alert('Informe ou selecione seu nome.');
-                  
-                  let assignedRole = 'CLIENT';
-
-                  if (!isClientMode) {
-                     const memberConfig = TEAM_MEMBERS_CREDENTIALS.find(m => m.name === loginName);
-                     if (!memberConfig) return alert('Usuário inválido.');
-                     if (memberConfig.pin !== loginPin) return alert('Código/PIN incorreto para este usuário!');
-                     assignedRole = memberConfig.role;
-                  } else {
-                     // In the future, validate client PIN with Supabase record
-                     console.log("Client login with PIN", loginPin);
-                  }
-
-                  try {
-                    await loginWithRole(loginName, assignedRole as any);
-                  } catch (err: any) {
-                    alert(err.message || 'Erro ao entrar.');
-                  }
-                }}
-                className="w-full py-4 gold-bg text-black rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 hover:scale-105 transition-all"
-              >
-                <LogIn size={16} /> Validar Acesso
-              </button>
-            </div>
-          </div>
-        </div>
-      );
+      return <LoginPage />;
     }
 
     if (permission && !(user.permissions as any)[permission]) {
@@ -404,7 +299,7 @@ const AppContent = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<EntryPage />} />
+        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/vendas" element={<ProtectedRoute permission="canViewFinancials"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SalesFlow /></AppLayout></ProtectedRoute>} />
         <Route path="/app/catalogo" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><CatalogModule /></AppLayout></ProtectedRoute>} />

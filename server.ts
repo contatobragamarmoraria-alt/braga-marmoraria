@@ -98,12 +98,44 @@ async function startServer() {
   });
 
   app.get('/api/auth/status', (req, res) => {
-    const tokens = req.cookies.google_tokens;
-    res.json({ isAuthenticated: !!tokens });
+    const googleTokens = req.cookies.google_tokens;
+    const authUser = req.cookies.auth_user;
+    
+    if (authUser) {
+      try {
+        const user = JSON.parse(authUser);
+        return res.json({ isAuthenticated: true, user });
+      } catch (e) {
+        // Fallback
+      }
+    }
+    
+    res.json({ isAuthenticated: !!googleTokens });
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    const users = await readDataFile('users.json');
+    
+    const user = users.find((u: any) => u.email === email && (u.password === password || u.pin === password));
+    
+    if (user) {
+      // Set session cookie
+      res.cookie('auth_user', JSON.stringify(user), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+      res.json({ success: true, user });
+    } else {
+      res.status(401).json({ error: 'E-mail ou senha incorretos.' });
+    }
   });
 
   app.post('/api/auth/logout', (req, res) => {
     res.clearCookie('google_tokens');
+    res.clearCookie('auth_user');
     res.json({ success: true });
   });
 

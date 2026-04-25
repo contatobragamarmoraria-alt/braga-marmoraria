@@ -6,8 +6,7 @@ import { useAuth } from './AuthContext';
 
 const EntryPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, login, loginAsGuest, loading } = useAuth();
-  const [error, setError] = useState('');
+  const { user, loading } = useAuth();
   const [isLocalLoading, setIsLocalLoading] = useState(false);
 
   React.useEffect(() => {
@@ -16,31 +15,14 @@ const EntryPage: React.FC = () => {
     }
   }, [user, loading, navigate]);
 
-  const handleGoogleLogin = async () => {
+  const handleStart = () => {
     setIsLocalLoading(true);
-    setError('');
-    try {
-      await login();
-    } catch (err) {
-      setError('Erro ao entrar com Google.');
-      setIsLocalLoading(false);
-    }
+    // Redireciona para o dashboard, que por ser rota protegida, 
+    // levará o usuário para a tela de Login se ele não estiver autenticado.
+    navigate('/app/dashboard');
   };
 
-  const handleGuestLogin = async () => {
-    setIsLocalLoading(true);
-    setError('');
-    try {
-      await loginAsGuest();
-      // Navigation will be handled by useEffect when user is set
-    } catch (err: any) {
-      console.error('Guest login error:', err);
-      setError(err.message || 'Erro ao entrar. Verifique se o login anônimo está ativado.');
-      setIsLocalLoading(false);
-    }
-  };
-
-  const showLoading = isLocalLoading || (loading && !error);
+  const showLoading = isLocalLoading || loading;
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 selection:bg-stone-200">
@@ -52,54 +34,31 @@ const EntryPage: React.FC = () => {
         <img 
           src="/logo.png.jpg" 
           alt="Braga Marmoraria" 
-          className="w-32 h-32 md:w-40 md:h-40 object-contain mb-8 mix-blend-multiply rounded-full transition-transform rotate-[45deg] shadow-sm" 
+          className="w-32 h-32 md:w-40 md:h-40 object-contain mb-8 mix-blend-multiply rounded-full transition-transform rotate-[-45deg] shadow-sm" 
         />
 
         <div className="w-full space-y-4">
+          <div className="mb-6">
+            <h2 className="text-xl font-serif font-bold text-stone-900 uppercase tracking-tight">Atelier Digital</h2>
+            <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mt-1">Gestão de Produção de Luxo</p>
+          </div>
+
           <button 
             type="button"
-            onClick={handleGuestLogin}
+            onClick={handleStart}
             disabled={showLoading}
             className="w-full py-4 gold-bg text-black rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70"
           >
             {showLoading ? (
               <Loader2 size={20} className="animate-spin" />
             ) : (
-              <>Entrar no Sistema <ArrowRight size={16} /></>
+              <>Acessar Área Restrita <Lock size={16} /></>
             )}
           </button>
 
-          <AnimatePresence>
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="flex items-center gap-2 text-red-500 text-[9px] font-bold uppercase tracking-wider text-center justify-center px-2 py-1"
-              >
-                <AlertCircle size={12} />
-                {error}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-stone-100"></div>
-            </div>
-            <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-widest">
-              <span className="bg-white px-3 text-stone-400">Ou use sua conta</span>
-            </div>
-          </div>
-
-          <button 
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={showLoading}
-            className="w-full py-3.5 bg-white border border-stone-200 text-stone-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-stone-50 transition-all flex items-center justify-center gap-3"
-          >
-            <Chrome size={16} className="text-red-500" /> Google Account
-          </button>
+          <p className="text-[8px] text-stone-400 font-bold uppercase tracking-widest pt-2">
+            Acesso exclusivo para equipe e clientes autorizados
+          </p>
         </div>
       </motion.div>
       
@@ -111,3 +70,4 @@ const EntryPage: React.FC = () => {
 };
 
 export default EntryPage;
+

@@ -49,7 +49,7 @@ const ProjectListModule: React.FC = () => {
   return (
     <div className="flex flex-col gap-4 relative min-h-full pb-8">
       {/* Header Banner */}
-      <div className="bg-stone-950 dark:bg-white/5 text-white p-6 rounded-[2rem] relative overflow-hidden shrink-0 shadow-lg">
+      <div className="bg-stone-950 dark:bg-white/5 text-white p-5 rounded-2xl relative overflow-hidden shrink-0 shadow-sm">
         <div className="relative z-10 flex items-center justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ const ProjectListModule: React.FC = () => {
         <div className="absolute top-0 right-0 w-48 h-48 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 bg-white dark:bg-onyx p-4 px-6 rounded-[2rem] border border-stone-200 dark:border-white/5 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 bg-white dark:bg-onyx p-4 px-5 rounded-2xl border border-stone-200 dark:border-white/5 shadow-sm">
         <div className="flex items-center gap-4 text-center md:text-left">
           <div className="space-y-0.5">
             <h2 className="text-xl font-serif font-bold text-stone-900 dark:text-white uppercase tracking-tight">Lista de Obras</h2>
