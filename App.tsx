@@ -301,7 +301,10 @@ const AppContent = () => {
     }
 
     if (permission && !(user.permissions as any)[permission]) {
-      return <Navigate to="/app/dashboard" replace />;
+      if (user.role === 'CLIENT') {
+        return <Navigate to="/app/portal-do-cliente" replace />;
+      }
+      return <Navigate to="/" replace />;
     }
 
     return <>{children}</>;
