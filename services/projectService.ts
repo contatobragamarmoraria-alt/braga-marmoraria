@@ -1,7 +1,19 @@
-
 import { Project } from '../types';
 
+const initialProjects: Project[] = [];
+
 export const projectService = {
+  getProjects: async (): Promise<Project[]> => {
+    try {
+      const response = await fetch('/api/projects');
+      if (response.ok) return response.json();
+      return initialProjects;
+    } catch (e) {
+      console.warn("API fallback to initialProjects");
+      return initialProjects;
+    }
+  },
+
   subscribeToProjects: (callback: (projects: Project[]) => void) => {
     const fetchProjects = async () => {
       try {
@@ -9,9 +21,11 @@ export const projectService = {
         if (response.ok) {
           const projects = await response.json();
           callback(projects);
+        } else {
+          callback(initialProjects);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        callback(initialProjects);
       }
     };
 
