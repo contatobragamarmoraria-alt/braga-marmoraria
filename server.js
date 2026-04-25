@@ -1,6 +1,5 @@
 // server.ts
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import { google } from "googleapis";
@@ -8,6 +7,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import fs from "fs/promises";
 dotenv.config();
+process.env.NODE_ENV = "production";
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
 async function startServer() {
@@ -18,7 +18,7 @@ async function startServer() {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI || "http://localhost:3000/auth/callback"
+    process.env.NODE_ENV === "production" ? "https://marmorariabraga.com.br/auth/callback" : process.env.GOOGLE_REDIRECT_URI || "http://localhost:3000/auth/callback"
   );
   const DATA_DIR = path.join(__dirname, "data");
   async function readDataFile(filename, defaultValue = []) {
@@ -81,11 +81,37 @@ async function startServer() {
     }
   });
   app.get("/api/auth/status", (req, res) => {
-    const tokens = req.cookies.google_tokens;
-    res.json({ isAuthenticated: !!tokens });
+    const googleTokens = req.cookies.google_tokens;
+    const authUser = req.cookies.auth_user;
+    if (authUser) {
+      try {
+        const user = JSON.parse(authUser);
+        return res.json({ isAuthenticated: true, user });
+      } catch (e) {
+      }
+    }
+    res.json({ isAuthenticated: !!googleTokens });
+  });
+  app.post("/api/auth/login", async (req, res) => {
+    const { email, password } = req.body;
+    const users = await readDataFile("users.json");
+    const user = users.find((u) => u.email === email && (u.password === password || u.pin === password));
+    if (user) {
+      res.cookie("auth_user", JSON.stringify(user), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 30 * 24 * 60 * 60 * 1e3
+        // 30 days
+      });
+      res.json({ success: true, user });
+    } else {
+      res.status(401).json({ error: "E-mail ou senha incorretos." });
+    }
   });
   app.post("/api/auth/logout", (req, res) => {
     res.clearCookie("google_tokens");
+    res.clearCookie("auth_user");
     res.json({ success: true });
   });
   app.get("/api/projects", async (req, res) => {
@@ -404,21 +430,25 @@ Atenciosamente,
       res.status(500).json({ error: "Erro ao buscar mensagens" });
     }
   });
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa"
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log("[DEBUG] Configurando rotas est\xE1ticas...");
+  const distPath = path.join(process.cwd(), "dist");
+  app.use(express.static(distPath));
+  app.use((req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
   });
+  console.log(`[DEBUG] Tentando iniciar o servidor na porta ${PORT}...`);
+  try {
+    const server = app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[SUCESSO] Server running on http://0.0.0.0:${PORT}`);
+    });
+    server.on("error", (err) => {
+      console.error("[ERRO CR\xCDTICO] Falha no app.listen:", err);
+    });
+  } catch (e) {
+    console.error("[EXCE\xC7\xC3O CR\xCDTICA] Erro ao tentar ligar a porta:", e);
+  }
 }
-startServer();
+console.log("[DEBUG] Chamando startServer()...");
+startServer().catch((err) => {
+  console.error("[ERRO FATAL] startServer() falhou:", err);
+});

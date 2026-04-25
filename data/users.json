@@ -118,5 +118,25 @@
       "canDeleteProjects": false,
       "canManageUsers": false
     }
+  },
+  {
+    "id": "cl1",
+    "name": "Cliente Teste",
+    "email": "cliente@exemplo.com",
+    "role": "CLIENT",
+    "status": "ACTIVE",
+    "avatar": "https://i.pravatar.cc/150?u=clt",
+    "createdAt": "2026-04-24T00:00:00.000Z",
+    "pin": "1234",
+    "password": "password123",
+    "permissions": {
+      "canViewFinancials": false,
+      "canViewTechnical": false,
+      "canViewCalendar": false,
+      "canViewOccurrences": false,
+      "canEditProjects": false,
+      "canDeleteProjects": false,
+      "canManageUsers": false
+    }
   }
 ]
