@@ -135,21 +135,9 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
                 {user.permissions?.canViewFinancials && (
                   <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
                 )}
-                <SidebarLink to="/app/catalogo" icon={Library} label="Catálogo" active={location.pathname === '/app/catalogo'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
-                {user.permissions?.canViewOccurrences && (
-                  <SidebarLink to="/app/historico" icon={History} label="Histórico" active={location.pathname === '/app/historico'} isCollapsed={isCollapsed} />
-                )}
-                {user.permissions?.canViewCalendar && (
-                  <SidebarLink to="/app/calendario" icon={Calendar} label="Calendário" active={location.pathname === '/app/calendario'} isCollapsed={isCollapsed} />
-                )}
-                {user.permissions?.canDeleteProjects && (
-                  <SidebarLink to="/app/lixeira" icon={Trash2} label="Lixeira" active={location.pathname === '/app/lixeira'} isCollapsed={isCollapsed} />
-                )}
-                <SidebarLink to="/app/whatsapp" icon={MessageSquare} label="WhatsApp" active={location.pathname === '/app/whatsapp'} isCollapsed={isCollapsed} />
-                <SidebarLink to="/app/conversas" icon={MessageSquare} label="Conversas" active={location.pathname === '/app/conversas'} isCollapsed={isCollapsed} />
               </>
             ) : null}
             
@@ -222,7 +210,6 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           <BottomNavLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} />
           <BottomNavLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} />
           <BottomNavLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} />
-          <BottomNavLink to="/app/conversas" icon={MessageSquare} label="Chat" active={location.pathname === '/app/conversas'} />
         </nav>
       </main>
     </div>
