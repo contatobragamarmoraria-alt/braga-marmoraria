@@ -1,135 +1,90 @@
-[
   {
-    "id": "OP-ANB-001",
-    "clientName": "Ana Beatriz Cavalcanti",
-    "clientAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200",
-    "clientEmail": "ana.beatriz@estudio.com",
-    "phone": "(11) 99122-3344",
-    "projectType": "Penthouse Jardins - Cozinha Integrada",
-    "concept": "Minimalismo escandinavo com foco em texturas naturais e veios contínuos do Quartzito.",
-    "value": 22500,
-    "paymentMethod": "Parcelado 10x s/ Juros (Cartão Corporativo)",
-    "startDate": "2025-11-20",
-    "estimatedDelivery": "15/04/2026",
+    "id": "C202614",
+    "clientName": "Exemplo Contrato Real",
+    "clientAvatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200",
+    "clientEmail": "cliente@exemplo.com",
+    "phone": "(11) 90000-0000",
+    "projectType": "Bancada com Fechamento Lateral",
+    "concept": "Projeto em Quartzo Branco com fechamento lateral e cuba fornecida pela Braga Marmoraria.",
+    "value": 6000,
+    "paymentMethod": "R$ 6.000,00 EM 6X NO FECHAMENTO DO PEDIDO",
+    "startDate": "2026-02-18",
+    "estimatedDelivery": "30 dias úteis após medição",
     "status": "AGUARDANDO_MEDICAO",
-    "progress": 25,
-    "responsible": "Ana Paula",
-    "image": "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&q=80&w=1200",
+    "progress": 10,
+    "responsible": "Leonil Braga",
+    "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
     "beforeImages": [],
     "afterImages": [],
-    "teamIds": [
-      "tm2",
-      "tm4"
-    ],
-    "supplierIds": [
-      "p1"
-    ],
-    "stakeholderIds": [
-      "p3"
-    ],
-    "materials": [],
+    "teamIds": ["tm1"],
+    "supplierIds": [],
+    "stakeholderIds": [],
+    "materials": ["Quartzo Branco"],
     "references": [],
     "detailedScope": [
       {
-        "title": "Bancada Principal",
+        "title": "Cozinha",
         "items": [
-          "Quartzito Taj Mahal 4cm",
-          "Acabamento em meia esquadria invisível"
+          "Bancada em Quartzo Branco",
+          "Fechamento lateral (pé de cascata)",
+          "Instalação de cuba fornecida pela empresa"
         ]
       }
     ],
-    "history": [],
+    "history": [
+      {
+        "id": "h1",
+        "date": "2026-02-18",
+        "user": "Sistema",
+        "action": "Contrato assinado e sinal efetuado."
+      }
+    ],
     "documents": [],
-    "tasks": [],
+    "tasks": [
+      { "id": "t1", "title": "Confirmar se móveis estão instalados (Item 10)", "completed": false, "category": "TECNICO" },
+      { "id": "t2", "title": "Medição Técnica no Local", "completed": false, "category": "TECNICO" },
+      { "id": "t3", "title": "Compra de Chapas (Quartzo Branco)", "completed": false, "category": "PRODUCAO" }
+    ],
     "timeline": [],
     "contractData": {
-      "contractorName": "Ana Beatriz Cavalcanti",
-      "cpf": "123.456.789-00",
-      "phone": "(11) 99122-3344",
-      "address": "Alameda Santos, 1234 - Jardins",
-      "cep": "01419-001",
-      "salesperson": "Ana Paula",
-      "closingDate": "2025-11-20",
-      "projectType": "Penthouse Jardins - Cozinha Integrada",
-      "scope": [
-        "Bancada Cozinha",
-        "Ilha Central"
-      ],
+      "contractorName": "Exemplo Contrato Real",
+      "cpf": "000.000.000-00",
+      "phone": "(11) 90000-0000",
+      "address": "Endereço da Obra, Guarulhos/SP",
+      "cep": "07000-000",
+      "salesperson": "Leonil Braga",
+      "closingDate": "2026-02-18",
+      "projectType": "Bancada com Fechamento Lateral",
+      "scope": ["Bancada", "Fechamento Lateral"],
       "commercialConditions": {
-        "totalValue": 22500,
-        "paymentMethod": "Parcelado 10x s/ Juros",
-        "downPayment": 5000,
-        "cancellationRule": "O sinal não será reembolsado em caso de cancelamento por parte do contratante após 7 dias úteis."
+        "totalValue": 6000,
+        "paymentMethod": "6x no Fechamento",
+        "downPayment": 1000,
+        "cancellationRule": "Desistência não implica na devolução do sinal (Cláusula 13)"
       },
       "billingData": {
-        "pixKey": "00.000.000/0001-00",
-        "bank": "Bradesco (237)",
-        "agency": "1234",
-        "account": "56789-0"
-      },
-      "preExecutionStage": {
-        "siteCheckPerformed": false,
-        "templateReady": false,
-        "technicalConditionsMet": {
-          "plasterFinished": true,
-          "plumbingInstalled": true,
-          "electricalInstalled": false,
-          "cabinetStructureReady": false
-        }
+        "pixKey": "17.496.099/0001-67",
+        "bank": "Itaú (Ag 6830 C/C 39240-0) / Santander (Ag 4638 C/C 13002688-9)",
+        "agency": "Várias",
+        "account": "Ver Contrato"
       },
       "responsibilities": {
         "client": [
-          "Fornecer cubas e cubos no ato da medição técnica.",
-          "Garantir ponto de água e esgoto no local.",
-          "Garantir ponto de energia 220v para ferramentas."
+          "Garantir local livre e móveis instalados para medição.",
+          "Fornecer projetos de hidráulica/elétrica/gás.",
+          "Remover granitos/pisos existentes (Item 9)."
         ],
         "company": [
-          "Executar conforme projeto executivo aprovado.",
-          "Fornecer materiais de primeira qualidade.",
-          "Manter ambiente limpo e organizado durante a obra."
+          "Instalação do granito e cuba.",
+          "Garantia de 2 anos contra defeitos de fabricação.",
+          "Peso máximo suportado: 30kg."
         ]
       },
-      "technicalConditions": {
-        "variationsAcknowledged": true,
-        "finishingTolerancesAccepted": false,
-        "educationCompleted": false
-      },
       "warranty": {
-        "period": "12 meses contra defeitos de fabricação e instalação.",
-        "coverage": "Rachaduras espontâneas, infiltrações por vedação e descolamentos.",
-        "exclusions": "Impactos fortuitos, uso de produtos abrasivos, manchas de gordura."
+        "period": "24 meses (2 anos)",
+        "coverage": "Defeitos de fabricação e instalação.",
+        "exclusions": "Uso de produtos abrasivos, ácidos, peso excessivo (>30kg)."
       }
     }
-  },
-  {
-    "id": "OP-394",
-    "clientName": "Mariana Oliveira",
-    "clientEmail": "",
-    "phone": "",
-    "projectType": "Reforma Suíte Master",
-    "concept": "Troca de revestimentos, nova iluminação embutida e marcenaria planejada em carvalho.",
-    "value": 85000,
-    "paymentMethod": "A definir",
-    "startDate": "2026-04-01T20:16:35.460Z",
-    "estimatedDelivery": "20/12/2023",
-    "status": "LEAD",
-    "progress": 0,
-    "responsible": "Roberto Silva",
-    "tasks": [],
-    "timeline": [],
-    "history": [],
-    "beforeImages": [],
-    "afterImages": [],
-    "teamIds": [],
-    "supplierIds": [],
-    "stakeholderIds": [],
-    "materials": [
-      "Mármore Carrara",
-      "Madeira Carvalho",
-      "Metais Dourados"
-    ],
-    "references": [],
-    "photoLog": [],
-    "documents": []
   }
 ]
