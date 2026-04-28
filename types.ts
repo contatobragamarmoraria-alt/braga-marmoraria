@@ -17,7 +17,7 @@ export interface Occurrence {
   attachments?: string[];
 }
 
-export type UserRole = 'ADMIN' | 'MANAGER' | 'TEAM_MEMBER' | 'CLIENT' | 'PARTNER';
+export type UserRole = 'ADMIN' | 'MANAGER' | 'TEAM_MEMBER' | 'CLIENT' | 'PARTNER' | 'SUPPORT';
 
 export interface UserPermissions {
   canViewFinancials: boolean;

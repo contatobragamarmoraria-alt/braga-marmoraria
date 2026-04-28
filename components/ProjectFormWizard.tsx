@@ -175,34 +175,89 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
 
     setIsSubmitting(true);
     try {
-      const newProject: Partial<Project> = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: `Projeto - ${client.name}`,
-        description: scope.notes,
-        status: 'PLANEJAMENTO' as ProjectStatus,
+      const projectId = Math.random().toString(36).substr(2, 9);
+      const newProject: Project = {
+        id: projectId,
+        clientName: client.name,
+        clientEmail: client.email,
+        phone: client.phone,
+        projectType: scope.items[0]?.type || 'Obra',
+        concept: scope.notes || `Projeto para ${client.name}`,
+        value: scope.totalValue,
+        paymentMethod: scope.paymentForm === 'parcelado' ? `${scope.paymentInstallments}x` : 'À Vista',
+        startDate: new Date().toISOString().split('T')[0],
+        estimatedDelivery: scope.desiredDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        status: 'AGUARDANDO_MEDICAO' as ProjectStatus,
+        progress: 0,
+        responsible: user?.name || '',
+        tasks: [],
+        timeline: [],
+        history: [{
+          id: 'h1',
+          date: new Date().toISOString().split('T')[0],
+          user: user?.name || 'Sistema',
+          action: 'Projeto criado via formulário wizard'
+        }],
+        image: '',
+        beforeImages: [],
+        afterImages: [],
+        teamIds: [user?.id || ''],
+        supplierIds: [],
+        stakeholderIds: [],
+        materials: scope.items.map(item => item.material).filter(m => m),
+        references: [],
+        photoLog: [],
+        documents: [],
+        notes: scope.notes,
         contractData: {
-          client,
-          work,
-          scope: {
-            items: scope.items,
+          contractorName: client.name,
+          cpf: client.cpf,
+          phone: client.phone,
+          address: work.address,
+          cep: work.cep,
+          salesperson: user?.name || '',
+          closingDate: new Date().toISOString().split('T')[0],
+          projectType: scope.items[0]?.type || 'Obra',
+          scope: scope.items.map(item => item.description || item.type),
+          commercialConditions: {
             totalValue: scope.totalValue,
-            paymentForm: scope.paymentForm,
-            paymentInstallments: scope.paymentInstallments,
-            desiredDate: scope.desiredDate,
-            clientResponsibilities: scope.clientResponsibilities
+            paymentMethod: scope.paymentForm === 'parcelado' ? `${scope.paymentInstallments}x` : 'À Vista',
+            downPayment: Math.round(scope.totalValue * 0.15),
+            cancellationRule: 'A ser confirmado'
+          },
+          responsibilities: {
+            client: scope.clientResponsibilities,
+            company: []
+          },
+          preExecutionStage: {
+            siteCheckPerformed: false,
+            templateReady: false,
+            technicalConditionsMet: {
+              plasterFinished: false,
+              plumbingInstalled: false,
+              electricalInstalled: false,
+              cabinetStructureReady: false
+            }
+          },
+          technicalConditions: {
+            variationsAcknowledged: false,
+            finishingTolerancesAccepted: false,
+            educationCompleted: false
+          },
+          warranty: {
+            period: '24 meses',
+            coverage: 'Defeitos de fabricação e instalação',
+            exclusions: 'Uso indevido do material'
           }
-        },
-        createdAt: new Date().toISOString(),
-        createdBy: user?.id || '',
-        updatedAt: new Date().toISOString()
+        }
       };
 
-      await projectService.addProject(newProject as Project);
+      await projectService.addProject(newProject);
 
       await auditService.logAction({
         action: 'CREATE_PROJECT',
         resource: 'projects',
-        details: `Projeto criado: ${newProject.name}`,
+        details: `Projeto criado: ${newProject.clientName} - ${newProject.projectType}`,
         status: 'SUCCESS'
       });
 
