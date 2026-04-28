@@ -1,43 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabaseProjectService, SupabaseProject } from '../services/supabaseProjectService';
 import { Plus, LayoutTemplate, MapPin, Tag, Grid } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import ProjectFormWizard from './ProjectFormWizard';
+import { projectService } from '../services/projectService';
+import { Project } from '../types';
 
 const ProjectListModule: React.FC = () => {
-  const [projects, setProjects] = useState<SupabaseProject[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const fetchProjects = async () => {
+  useEffect(() => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const data = await supabaseProjectService.getProjects();
-      setProjects(data);
+      const unsubscribe = projectService.subscribeToProjects((data) => {
+        setProjects(data.filter(p => !p.deletedAt));
+        setIsLoading(false);
+      });
+      return () => unsubscribe();
     } catch (error) {
       console.error('Falha ao carregar projetos', error);
-    } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchProjects();
   }, []);
-
-  const handleProjectCreated = () => {
-    fetchProjects();
-  };
 
   const getFilteredProjects = () => {
     if (!user) return [];
     if (user.role === 'ADMIN' || user.role === 'MANAGER') return projects;
-    
-    // For specialized roles (Team Member, Partner), filter if their name is allocated in the project text
+
     return projects.filter(p => {
        const blob = JSON.stringify(p).toLowerCase();
        return blob.includes(user.name.toLowerCase());
@@ -95,26 +89,20 @@ const ProjectListModule: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 custom-scroll">
           {filteredProjects.map((project) => (
-            <motion.div 
+            <motion.div
               key={project.id}
-              onClick={() => navigate(`/app/projetos-detalhe/${project.id}`)}
+              onClick={() => navigate(`/project/${project.id}`)}
               className="bg-white dark:bg-onyx p-5 rounded-[1.5rem] border border-stone-200 shadow-sm cursor-pointer hover:border-gold/50 hover:shadow-md transition-all flex flex-col gap-3 group"
             >
               <div className="flex justify-between items-start gap-2">
-                <h4 className="font-serif font-bold text-lg text-stone-900 dark:text-white group-hover:text-gold transition-colors">{project.name}</h4>
+                <h4 className="font-serif font-bold text-lg text-stone-900 dark:text-white group-hover:text-gold transition-colors">{project.clientName}</h4>
                 <span className="text-[8px] font-bold uppercase tracking-widest bg-stone-100 dark:bg-white/5 px-2 py-1 rounded border border-stone-200 dark:border-white/10 text-stone-500 shrink-0">{project.status}</span>
               </div>
-              
+
               <div className="space-y-1.5 flex-1">
-                {project.client_name && (
-                   <p className="text-xs text-stone-600 dark:text-stone-300 font-bold uppercase tracking-wide flex items-center gap-1.5"><span className="w-4 h-4 bg-stone-100 rounded flex items-center justify-center shrink-0">C</span> {project.client_name}</p>
-                )}
-                {project.type && (
-                   <p className="text-xs text-stone-500 dark:text-stone-400 flex items-center gap-1.5"><Tag size={12} className="shrink-0" /> {project.type} {project.area ? `- ${project.area}` : ''}</p>
-                )}
-                {project.address && (
-                   <p className="text-xs text-stone-500 dark:text-stone-400 flex items-center gap-1.5 line-clamp-1"><MapPin size={12} className="shrink-0" /> {project.address}</p>
-                )}
+                <p className="text-xs text-stone-600 dark:text-stone-300 font-bold uppercase tracking-wide flex items-center gap-1.5"><span className="w-4 h-4 bg-stone-100 rounded flex items-center justify-center shrink-0">C</span> {project.clientName}</p>
+                <p className="text-xs text-stone-500 dark:text-stone-400 flex items-center gap-1.5"><Tag size={12} className="shrink-0" /> {project.projectType}</p>
+                <p className="text-xs text-stone-500 dark:text-stone-400 flex items-center gap-1.5 line-clamp-1"><MapPin size={12} className="shrink-0" /> Progresso: {project.progress}%</p>
               </div>
             </motion.div>
           ))}
@@ -124,7 +112,7 @@ const ProjectListModule: React.FC = () => {
       {/* Formulário Modal */}
       <AnimatePresence>
         {isFormOpen && (
-           <ProjectFormWizard onClose={() => setIsFormOpen(false)} onCreated={handleProjectCreated} />
+           <ProjectFormWizard onClose={() => setIsFormOpen(false)} onCreated={() => setIsFormOpen(false)} />
         )}
       </AnimatePresence>
     </div>
