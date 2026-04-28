@@ -43,7 +43,7 @@ const EntryPage: React.FC = () => {
             <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mt-1">Gestão de Produção de Luxo</p>
           </div>
 
-          <button 
+          <button
             type="button"
             onClick={handleStart}
             disabled={showLoading}
@@ -54,6 +54,14 @@ const EntryPage: React.FC = () => {
             ) : (
               <>Acessar Área Restrita <Lock size={16} /></>
             )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/client/login')}
+            className="w-full py-3 border-2 border-stone-300 text-stone-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:border-stone-400 hover:bg-stone-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          >
+            <ArrowRight size={14} /> Acompanhar Projeto
           </button>
 
           <p className="text-[8px] text-stone-400 font-bold uppercase tracking-widest pt-2">
