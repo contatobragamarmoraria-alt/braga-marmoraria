@@ -90,7 +90,7 @@ const STATIC_USERS: AppUser[] = [
     status: 'ACTIVE',
     avatar: 'https://ui-avatars.com/api/?name=Suporte+Tecnico&background=c8a96e&color=fff',
     createdAt: '2026-04-28T00:00:00.000Z',
-    pin: '1234',
+    pin: '@#@1234',
     password: 'password123',
     permissions: {
       canViewFinancials: true,
