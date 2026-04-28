@@ -5,7 +5,7 @@ import { Search, Plus, Clock, ChevronRight, ChevronLeft, Calendar, X, Layers, Br
 import { STAGES, MOCK_TEAM, MOCK_USER } from '../constants';
 import { Project, ProjectStatus, ProjectTask } from '../types';
 import ProjectDetailsModal from './ProjectDetailsModal';
-import SmartProjectModal from './SmartProjectModal';
+import ProjectFormWizard from './ProjectFormWizard';
 
 const InfoItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) => (
   <div>
@@ -336,7 +336,7 @@ const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) =
       </AnimatePresence>
 
       {selectedProject && <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProject(null)} updateProject={updateProject} />}
-      <SmartProjectModal isOpen={isSmartModalOpen} onClose={() => setIsSmartModalOpen(false)} onProjectCreated={(p) => { addProject(p); setSelectedProject(p); }} />
+      {isSmartModalOpen && <ProjectFormWizard onClose={() => setIsSmartModalOpen(false)} onCreated={() => setIsSmartModalOpen(false)} />}
     </div>
   );
 };

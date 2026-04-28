@@ -4,7 +4,7 @@ import { supabaseProjectService, SupabaseProject } from '../services/supabasePro
 import { Plus, LayoutTemplate, MapPin, Tag, Grid } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import ProjectFormDialog from './ProjectFormDialog';
+import ProjectFormWizard from './ProjectFormWizard';
 
 const ProjectListModule: React.FC = () => {
   const [projects, setProjects] = useState<SupabaseProject[]>([]);
@@ -124,7 +124,7 @@ const ProjectListModule: React.FC = () => {
       {/* Formulário Modal */}
       <AnimatePresence>
         {isFormOpen && (
-           <ProjectFormDialog onClose={() => setIsFormOpen(false)} onCreated={handleProjectCreated} />
+           <ProjectFormWizard onClose={() => setIsFormOpen(false)} onCreated={handleProjectCreated} />
         )}
       </AnimatePresence>
     </div>

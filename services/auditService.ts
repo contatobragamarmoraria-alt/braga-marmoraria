@@ -16,13 +16,13 @@ export interface AuditLog {
   userName: string;
   userEmail: string;
   action: AuditAction;
-  resource: string; // o que foi afetado (projeto ID, usuário ID, etc)
+  resource: string;
   resourceName: string;
   description: string;
   details?: Record<string, any>;
   ipAddress?: string;
   status: 'SUCCESS' | 'FAILED';
-  duration?: number; // em ms
+  duration?: number;
 }
 
 export interface AuditStats {
@@ -42,39 +42,42 @@ const STORAGE_KEY = 'bm-audit-logs';
 const MAX_LOGS = 10000;
 
 export const auditService = {
-  // Record an action
-  logAction: (log: Omit<AuditLog, 'id' | 'timestamp'>) => {
+  logAction: async (log: Partial<AuditLog> & { action: string; resource: string; status: 'SUCCESS' | 'FAILED' }) => {
     const logs = auditService.getLogs();
     const newLog: AuditLog = {
-      ...log,
       id: 'audit-' + Math.random().toString(36).substr(2, 9),
       timestamp: new Date().toISOString(),
+      userId: log.userId || 'system',
+      userName: log.userName || 'Sistema',
+      userEmail: log.userEmail || '',
+      action: log.action as AuditAction,
+      resource: log.resource,
+      resourceName: log.resourceName || log.resource,
+      description: log.description || (log as any).details || '',
+      details: log.details,
+      status: log.status,
+      duration: log.duration,
     };
 
     logs.unshift(newLog);
     if (logs.length > MAX_LOGS) logs.pop();
-
     localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
     return newLog;
   },
 
-  // Get all logs
   getLogs: (): AuditLog[] => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : [];
   },
 
-  // Get logs for a specific user
   getUserLogs: (userId: string): AuditLog[] => {
     return auditService.getLogs().filter(log => log.userId === userId);
   },
 
-  // Get logs for a specific action
   getActionLogs: (action: AuditAction): AuditLog[] => {
     return auditService.getLogs().filter(log => log.action === action);
   },
 
-  // Get logs within a date range
   getLogsByDateRange: (startDate: string, endDate: string): AuditLog[] => {
     const start = new Date(startDate).getTime();
     const end = new Date(endDate).getTime();
@@ -84,11 +87,10 @@ export const auditService = {
     });
   },
 
-  // Get statistics
   getStats: (): AuditStats => {
     const logs = auditService.getLogs();
     const activeUsers = Array.from(new Set(logs.map(l => l.userId)));
-    const actionCounts: Record<AuditAction, number> = {} as any;
+    const actionCounts: Record<string, number> = {};
 
     logs.forEach(log => {
       actionCounts[log.action] = (actionCounts[log.action] || 0) + 1;
@@ -113,24 +115,18 @@ export const auditService = {
     };
   },
 
-  // Clear logs (only SUPPORT can do this)
   clearLogs: () => {
     localStorage.removeItem(STORAGE_KEY);
   },
 
-  // Export logs as JSON
   exportLogs: (): string => {
-    const logs = auditService.getLogs();
-    return JSON.stringify(logs, null, 2);
+    return JSON.stringify(auditService.getLogs(), null, 2);
   },
 
-  // Subscribe to log changes
   subscribeToLogs: (callback: (logs: AuditLog[]) => void) => {
-    const fetchLogs = () => {
-      callback(auditService.getLogs());
-    };
+    const fetchLogs = () => callback(auditService.getLogs());
     fetchLogs();
     const interval = setInterval(fetchLogs, 5000);
     return () => clearInterval(interval);
-  }
+  },
 };
