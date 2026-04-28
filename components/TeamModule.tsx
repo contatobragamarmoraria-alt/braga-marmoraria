@@ -111,7 +111,7 @@ const TeamModule: React.FC = () => {
     localStorage.setItem(STORAGE_TASKS, JSON.stringify(list));
   };
 
-  const canEdit = currentUser?.role === 'ADMIN' || currentUser?.role === 'MANAGER';
+  const canEdit = currentUser?.role === 'ADMIN' || currentUser?.role === 'MANAGER' || currentUser?.role === 'SUPPORT';
 
   if (!canEdit) {
     return (

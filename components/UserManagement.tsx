@@ -37,7 +37,8 @@ const RoleBadge = ({ role }: { role: UserRole }) => {
     MANAGER: { label: 'Gerente', color: 'bg-stone-900 text-white border-stone-800', icon: Shield },
     TEAM_MEMBER: { label: 'Equipe', color: 'bg-stone-100 text-stone-600 border-stone-200', icon: User },
     CLIENT: { label: 'Cliente', color: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: CheckCircle2 },
-    PARTNER: { label: 'Parceiro', color: 'bg-indigo-50 text-indigo-600 border-indigo-100', icon: UserCog }
+    PARTNER: { label: 'Parceiro', color: 'bg-indigo-50 text-indigo-600 border-indigo-100', icon: UserCog },
+    SUPPORT: { label: 'Suporte Técnico', color: 'bg-purple-50 text-purple-600 border-purple-100', icon: ShieldCheck }
   };
 
   const config = configs[role];
@@ -107,13 +108,19 @@ const UserManagement: React.FC = () => {
   };
 
   const deleteUser = async (id: string) => {
+    const userToDelete = users.find(u => u.id === id);
+
+    if (userToDelete?.role === 'SUPPORT') {
+      alert('⚠️ O perfil de Suporte Técnico é irrevogável e não pode ser removido do sistema.');
+      return;
+    }
+
     if (id === currentUser?.id) {
       alert('Você não pode remover seu próprio acesso.');
       return;
     }
-    
-    const userToDelete = users.find(u => u.id === id);
-    const confirmMessage = userToDelete?.role === 'CLIENT' 
+
+    const confirmMessage = userToDelete?.role === 'CLIENT'
       ? 'Tem certeza que deseja remover este cliente? Todos os projetos associados serão movidos para a lixeira.'
       : 'Tem certeza que deseja remover este usuário?';
 
@@ -261,9 +268,15 @@ const UserManagement: React.FC = () => {
                         >
                           {user.status === 'ACTIVE' ? <XCircle size={18} /> : <CheckCircle2 size={18} />}
                         </button>
-                        <button 
+                        <button
                           onClick={() => deleteUser(user.id)}
-                          className="p-2 text-stone-400 hover:text-stone-950 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-white/10 rounded-lg transition-all"
+                          disabled={user.role === 'SUPPORT'}
+                          className={`p-2 rounded-lg transition-all ${
+                            user.role === 'SUPPORT'
+                              ? 'text-stone-300 cursor-not-allowed opacity-50'
+                              : 'text-stone-400 hover:text-stone-950 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-white/10'
+                          }`}
+                          title={user.role === 'SUPPORT' ? 'Suporte Técnico não pode ser removido' : 'Remover usuário'}
                         >
                           <Trash2 size={18} />
                         </button>

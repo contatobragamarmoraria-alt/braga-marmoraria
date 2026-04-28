@@ -139,7 +139,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
                 <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
-                {(user.role === 'ADMIN' || user.role === 'MANAGER') && (
+                {(user.role === 'ADMIN' || user.role === 'MANAGER' || user.role === 'SUPPORT') && (
                   <SidebarLink to="/app/equipe" icon={UserCog} label="Equipe" active={location.pathname === '/app/equipe'} isCollapsed={isCollapsed} />
                 )}
               </>

@@ -115,13 +115,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 600));
     const assignedPermissions: UserPermissions = {
-      canViewFinancials: role === 'ADMIN' || role === 'MANAGER',
+      canViewFinancials: role === 'ADMIN' || role === 'MANAGER' || role === 'SUPPORT',
       canViewTechnical: role !== 'CLIENT',
       canViewCalendar: role !== 'CLIENT',
       canViewOccurrences: role !== 'CLIENT',
-      canEditProjects: role === 'ADMIN' || role === 'MANAGER',
-      canDeleteProjects: role === 'ADMIN',
-      canManageUsers: role === 'ADMIN'
+      canEditProjects: role === 'ADMIN' || role === 'MANAGER' || role === 'SUPPORT',
+      canDeleteProjects: role === 'ADMIN' || role === 'SUPPORT',
+      canManageUsers: role === 'ADMIN' || role === 'SUPPORT'
     };
     
     const configuredUser: AppUser = {
