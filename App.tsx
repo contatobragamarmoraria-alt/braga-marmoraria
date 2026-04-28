@@ -70,17 +70,26 @@ const BottomNavLink = ({ to, icon: Icon, label, active }: { to: string, icon: an
   </Link>
 );
 
-const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: { 
-  children?: React.ReactNode, 
+const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
+  children?: React.ReactNode,
   onOpenImport: () => void,
   theme: 'light' | 'dark',
   toggleTheme: () => void
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  const canCreateProject = user && (
+    user.role === 'ADMIN' ||
+    user.role === 'MANAGER' ||
+    user.role === 'SUPPORT' ||
+    user.id === 'tm1' || // Braga
+    user.id === 'tm2'    // Jamile
+  );
 
   const isLP = location.pathname === '/';
   const isClient = location.pathname.startsWith('/client/');
@@ -153,7 +162,13 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             <div className="border-t border-stone-100 dark:border-white/5 mx-3 my-2 md:my-3" />
             <SidebarLink to="/app/configuracoes" icon={Settings} label="Ajustes" active={location.pathname === '/app/configuracoes'} isCollapsed={isCollapsed} />
             
-            <div className="pt-2 md:pt-6 px-2">
+            <div className="pt-2 md:pt-6 px-2 space-y-2">
+              {canCreateProject && (
+                <button onClick={() => setIsNewProjectOpen(true)} className={`w-full flex items-center gap-3 px-3 py-2.5 md:py-3 rounded-xl gold-bg text-black border border-gold/50 hover:bg-yellow-400 transition-all font-bold text-[9px] uppercase tracking-widest ${isCollapsed ? 'justify-center' : ''}`}>
+                  <Plus size={18} className="shrink-0" />
+                  {!isCollapsed && <span>Novo Projeto</span>}
+                </button>
+              )}
                <button onClick={() => onOpenImport()} className={`hidden w-full flex items-center gap-3 px-3 py-2.5 md:py-3 rounded-xl bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-stone-900 dark:text-gold hover:bg-stone-100 transition-all ${isCollapsed ? 'justify-center' : ''}`}>
                  <Sparkles size={18} className="shrink-0" />
                  {!isCollapsed && <span className="text-[9px] font-bold uppercase tracking-widest">Sincronia IA</span>}
@@ -218,6 +233,19 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
           <BottomNavLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} />
         </nav>
       </main>
+
+      {/* Novo Projeto Modal */}
+      <AnimatePresence>
+        {isNewProjectOpen && (
+          <ProjectFormWizard
+            onClose={() => setIsNewProjectOpen(false)}
+            onCreated={() => {
+              setIsNewProjectOpen(false);
+              navigate('/app/projetos-lista');
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
