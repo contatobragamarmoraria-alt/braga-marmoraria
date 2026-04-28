@@ -129,10 +129,12 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    u.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredUsers = users
+    .filter(u => u.role !== 'SUPPORT') // Oculta o usuário de Suporte Técnico
+    .filter(u =>
+      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   if (!currentUser?.permissions.canManageUsers && currentUser?.role !== 'ADMIN') {
     return (

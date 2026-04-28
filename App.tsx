@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { 
+import {
   LayoutDashboard, Columns, X, Home,
   BarChart3, PanelLeftClose, PanelLeft,
   ChevronLeft, Sparkles, Sun, Moon, TrendingUp,
   Settings, Megaphone, Monitor, Users, MessageSquare,
-  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog
+  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog, Eye
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -32,6 +32,7 @@ import UserProfile from './components/UserProfile';
 import ClientPortal from './components/ClientPortal';
 import CatalogModule from './components/CatalogModule';
 import TeamModule from './components/TeamModule';
+import AuditPanel from './components/AuditPanel';
 import LoginPage from './components/LoginPage';
 import { MOCK_USER } from './constants';
 import { Project, AppUser } from './types';
@@ -149,6 +150,9 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             <SidebarLink to="/app/perfil" icon={User} label="Meu Perfil" active={location.pathname === '/app/perfil'} isCollapsed={isCollapsed} />
 
             <div className="border-t border-stone-100 dark:border-white/5 mx-3 my-2 md:my-3" />
+            {user?.role === 'SUPPORT' && (
+              <SidebarLink to="/app/auditoria" icon={Eye} label="Auditoria" active={location.pathname === '/app/auditoria'} isCollapsed={isCollapsed} />
+            )}
             <SidebarLink to="/app/configuracoes" icon={Settings} label="Ajustes" active={location.pathname === '/app/configuracoes'} isCollapsed={isCollapsed} />
             
             <div className="pt-2 md:pt-6 px-2">
@@ -325,6 +329,7 @@ const AppContent = () => {
         <Route path="/app/projetos" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><KanbanBoard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/proprietarios" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientsList projects={activeProjects} onDelete={deleteProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/equipe" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><TeamModule /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/auditoria" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><AuditPanel /></AppLayout></ProtectedRoute>} />
         <Route path="/app/perfil" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><UserProfile user={user!} onUpdate={(u) => {/* trigger update if needed */}} onLogout={logout} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/portal-do-cliente" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientPortal user={user!} projects={activeProjects} onNavigate={(tab, id) => navigate(id ? `/project/${id}` : `/app/${tab}`)} /></AppLayout></ProtectedRoute>} />
         <Route path="/project/:id" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectMasterView projects={projects} updateProject={updateProject} deleteProject={deleteProject} /></AppLayout></ProtectedRoute>} />
