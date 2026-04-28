@@ -6,7 +6,7 @@ import {
   BarChart3, PanelLeftClose, PanelLeft,
   ChevronLeft, Sparkles, Sun, Moon, TrendingUp,
   Settings, Megaphone, Monitor, Users, MessageSquare,
-  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog, Eye
+  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog, Eye, Plus
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -26,6 +26,7 @@ import OccurrenceHistory from './components/OccurrenceHistory';
 import GlobalCalendar from './components/GlobalCalendar';
 import ProjectListModule from './components/ProjectListModule';
 import ProjectSupabaseDetail from './components/ProjectSupabaseDetail';
+import ProjectFormWizard from './components/ProjectFormWizard';
 import ClientProjectDashboard from './components/ClientProjectDashboard';
 import ClientLoginPage from './components/ClientLoginPage';
 import Trash from './components/Trash';
