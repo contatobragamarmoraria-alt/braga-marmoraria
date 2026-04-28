@@ -26,6 +26,7 @@ import OccurrenceHistory from './components/OccurrenceHistory';
 import GlobalCalendar from './components/GlobalCalendar';
 import ProjectListModule from './components/ProjectListModule';
 import ProjectSupabaseDetail from './components/ProjectSupabaseDetail';
+import ClientProjectDashboard from './components/ClientProjectDashboard';
 import Trash from './components/Trash';
 import WhatsAppMirror from './components/WhatsAppMirror';
 import UserProfile from './components/UserProfile';
@@ -329,6 +330,7 @@ const AppContent = () => {
         <Route path="/app/portal-do-cliente" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientPortal user={user!} projects={activeProjects} onNavigate={(tab, id) => navigate(id ? `/project/${id}` : `/app/${tab}`)} /></AppLayout></ProtectedRoute>} />
         <Route path="/project/:id" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectMasterView projects={projects} updateProject={updateProject} deleteProject={deleteProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/client/:id" element={<ClientView projects={activeProjects} />} />
+        <Route path="/client/project/:projectId" element={<AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientProjectDashboard /></AppLayout>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {isImportOpen && <ImportCenter onImport={async (data) => {
