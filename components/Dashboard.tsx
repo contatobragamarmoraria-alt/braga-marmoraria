@@ -7,7 +7,7 @@ import { Project, ProjectTask } from '../types';
 import { MOCK_TEAM, STAGES } from '../constants';
 import { occurrenceService } from '../services/occurrenceService';
 import ProjectDetailsModal from './ProjectDetailsModal';
-import SmartProjectModal from './SmartProjectModal';
+import ProjectFormWizard from './ProjectFormWizard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleService } from '../src/services/GoogleService';
 import { useAuth } from './AuthContext';
@@ -771,11 +771,12 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
       <AnimatePresence>
         {selectedProject && <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProject(null)} updateProject={updateProject} />}
         <AlertsModal isOpen={isAlertsModalOpen} onClose={() => setIsAlertsModalOpen(false)} notifications={notifications} onCompleteTask={handleCompleteTask} onNavigate={handleNavigate} googleAuth={googleAuth} />
-        <SmartProjectModal isOpen={isSmartModalOpen} onClose={() => setIsSmartModalOpen(false)} onProjectCreated={(p) => { 
-          addProject?.(p); 
-          setSelectedProject(p);
-          navigate('/app/projetos');
-        }} />
+        {isSmartModalOpen && (
+          <ProjectFormWizard onClose={() => setIsSmartModalOpen(false)} onCreated={() => {
+            setIsSmartModalOpen(false);
+            navigate('/app/projetos');
+          }} />
+        )}
         <AreaProjectsModal isOpen={!!selectedArea} onClose={() => setSelectedArea(null)} areaName={selectedArea || ''} projects={projectsByArea} onNavigate={handleNavigate} />
         <InboxModal isOpen={isInboxModalOpen} onClose={() => setIsInboxModalOpen(false)} googleAuth={googleAuth} />
       </AnimatePresence>
