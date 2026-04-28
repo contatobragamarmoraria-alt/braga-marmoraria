@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Check, Plus, Trash2 } from 'lucide-react';
 import { auditService } from '../services/auditService';
 import { projectService } from '../services/projectService';
+import { userService } from '../services/userService';
 import { useAuth } from './AuthContext';
-import { Project, ProjectStatus } from '../types';
+import { Project, ProjectStatus, AppUser, UserPermissions } from '../types';
 
 interface ClientData {
   name: string;
@@ -76,6 +77,8 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clientCreated, setClientCreated] = useState<AppUser | null>(null);
+  const [showCredentials, setShowCredentials] = useState(false);
 
   const [client, setClient] = useState<ClientData>({
     name: '',
@@ -170,11 +173,68 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
     setScope({ ...scope, clientResponsibilities: updated });
   };
 
+  const generatePassword = (): string => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  };
+
+  const createClientUser = async (clientName: string, clientEmail: string): Promise<AppUser | null> => {
+    try {
+      const password = generatePassword();
+      const newClient: AppUser = {
+        id: `cl_${Math.random().toString(36).substr(2, 9)}`,
+        name: clientName,
+        email: clientEmail,
+        phone: client.phone,
+        role: 'CLIENT',
+        status: 'ACTIVE',
+        avatar: `https://i.pravatar.cc/150?u=${clientEmail}`,
+        createdAt: new Date().toISOString(),
+        permissions: {
+          canViewFinancials: false,
+          canViewTechnical: false,
+          canViewCalendar: true,
+          canViewOccurrences: true,
+          canEditProjects: false,
+          canDeleteProjects: false,
+          canManageUsers: false
+        },
+        pin: Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
+        password: password
+      };
+
+      await userService.addUser(newClient);
+
+      console.log('Novo cliente criado:', {
+        id: newClient.id,
+        name: newClient.name,
+        email: newClient.email,
+        password: newClient.password,
+        pin: newClient.pin
+      });
+
+      return newClient;
+    } catch (error) {
+      console.error('Erro ao criar cliente:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateStep(3)) return;
 
     setIsSubmitting(true);
     try {
+      // Criar novo cliente
+      const newClient = await createClientUser(client.name, client.email);
+      if (newClient) {
+        setClientCreated(newClient);
+      }
+
       const projectId = Math.random().toString(36).substr(2, 9);
       const newProject: Project = {
         id: projectId,
@@ -261,8 +321,12 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
         status: 'SUCCESS'
       });
 
-      onCreated();
-      onClose();
+      // Mostrar credenciais por 5 segundos, depois fechar
+      setShowCredentials(true);
+      setTimeout(() => {
+        onCreated();
+        onClose();
+      }, 5000);
     } catch (error) {
       console.error('Erro ao criar projeto:', error);
       await auditService.logAction({
@@ -306,18 +370,86 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
         </div>
 
         {/* Progress Bar */}
-        <div className="h-2 bg-stone-200 dark:bg-white/10">
-          <motion.div
-            className="h-full bg-gold"
-            initial={{ width: '33%' }}
-            animate={{ width: `${(step / 3) * 100}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
+        {!showCredentials && (
+          <div className="h-2 bg-stone-200 dark:bg-white/10">
+            <motion.div
+              className="h-full bg-gold"
+              initial={{ width: '33%' }}
+              animate={{ width: `${(step / 3) * 100}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div className="p-6">
-          <AnimatePresence mode="wait">
+          {showCredentials && clientCreated ? (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="text-center space-y-6"
+              >
+                <div className="flex justify-center">
+                  <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <Check className="text-green-600 dark:text-green-400" size={32} />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl font-bold text-stone-900 dark:text-white mb-2">Projeto Criado com Sucesso!</h3>
+                  <p className="text-stone-600 dark:text-stone-400">Novo cliente criado e projeto vinculado</p>
+                </div>
+
+                <div className="bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-lg p-6 space-y-4 text-left">
+                  <h4 className="font-bold text-stone-900 dark:text-white text-lg">Credenciais do Cliente</h4>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400">Nome</label>
+                    <p className="text-lg font-serif text-stone-900 dark:text-white">{clientCreated.name}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400">E-mail (Login)</label>
+                    <p className="text-lg font-mono text-stone-900 dark:text-white break-all">{clientCreated.email}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400">Senha</label>
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-mono text-stone-900 dark:text-white flex-1">{clientCreated.password}</p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(clientCreated.password!);
+                        }}
+                        className="px-3 py-1.5 bg-gold text-black rounded hover:bg-gold/90 transition-colors text-xs font-semibold"
+                      >
+                        Copiar
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400">PIN (Login Alternativo)</label>
+                    <p className="text-lg font-mono text-stone-900 dark:text-white">{clientCreated.pin}</p>
+                  </div>
+
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded p-3 mt-4">
+                    <p className="text-xs text-yellow-800 dark:text-yellow-300">
+                      <strong>Importante:</strong> Compartilhe essas credenciais com o cliente de forma segura. O cliente poderá acompanhar a evolução do projeto usando essas informações.
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-stone-500 dark:text-stone-400">
+                  Encerrando em poucos segundos...
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -648,6 +780,7 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
               </motion.div>
             )}
           </AnimatePresence>
+          )}
         </div>
 
         {/* Footer */}
