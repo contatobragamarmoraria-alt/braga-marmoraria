@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, Shield, Camera, Save, Bell, Lock, LogOut, ChevronRight, Key, Eye, EyeOff, Users, Edit2 } from 'lucide-react';
 import { AppUser } from '../types';
@@ -14,11 +14,13 @@ interface Props {
 
 const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
   const { user: currentUser } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [newPin, setNewPin] = useState('');
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
   const [editingOtherUser, setEditingOtherUser] = useState<AppUser | null>(null);
+  const [avatar, setAvatar] = useState(user.avatar);
   
   const [formData, setFormData] = useState({
     name: user.name,
@@ -42,6 +44,27 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
     } catch (error) {
       alert('Erro ao salvar alterações.');
     }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const result = event.target?.result as string;
+      try {
+        setAvatar(result);
+        await userService.updateUser(user.id, { avatar: result });
+        onUpdate({ avatar: result });
+        alert('Foto atualizada com sucesso!');
+      } catch (error) {
+        alert('Erro ao atualizar foto.');
+        setAvatar(user.avatar);
+      }
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handlePinUpdate = async () => {
@@ -72,12 +95,13 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
       <div className="max-w-4xl mx-auto space-y-12">
         <header className="flex flex-col md:flex-row items-center gap-8 border-b border-stone-200 dark:border-white/5 pb-12">
            <div className="relative group">
-              <div className="w-32 h-32 md:w-48 md:h-48 rounded-[3rem] overflow-hidden border-4 border-white dark:border-onyx shadow-2xl">
-                <img src={user.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400'} className="w-full h-full object-cover" />
+              <div className="w-32 h-32 md:w-48 md:h-48 rounded-[3rem] overflow-hidden border-4 border-white dark:border-onyx shadow-2xl cursor-pointer hover:opacity-80 transition-opacity" onClick={() => fileInputRef.current?.click()}>
+                <img src={avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400'} className="w-full h-full object-cover" />
               </div>
-              <button className="absolute bottom-2 right-2 p-3 bg-gold text-black rounded-2xl shadow-xl hover:scale-110 transition-transform">
+              <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-2 right-2 p-3 bg-gold text-black rounded-2xl shadow-xl hover:scale-110 transition-transform">
                 <Camera size={20} />
               </button>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
            </div>
            <div className="text-center md:text-left space-y-2">
               <span className="px-4 py-1 bg-gold/10 text-gold rounded-full text-[10px] font-bold uppercase tracking-[0.3em]">{user.role}</span>
