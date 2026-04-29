@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Clock, ChevronRight, ChevronLeft, Calendar, X, Layers, Briefcase, User, CheckCircle, Sparkles, Trash2 } from 'lucide-react';
-import { STAGES, MOCK_TEAM, MOCK_USER } from '../constants';
+import { STAGES, MOCK_TEAM } from '../constants';
 import { Project, ProjectStatus, ProjectTask } from '../types';
 import { useAuth } from './AuthContext';
 import ProjectDetailsModal from './ProjectDetailsModal';

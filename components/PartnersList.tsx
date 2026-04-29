@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Phone, Mail, Building, Globe, ArrowUpRight, MessageSquare, Users, Sparkles } from 'lucide-react';
-import { MOCK_PARTNERS, MOCK_USER } from '../constants';
+import { MOCK_PARTNERS } from '../constants';
 import { useAuth } from './AuthContext';
 
 const PartnersList: React.FC = () => {

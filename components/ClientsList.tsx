@@ -4,7 +4,6 @@ import { Search, UserPlus, Filter, ChevronRight, DollarSign, Sparkles, Trash2, A
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
-import { MOCK_USER } from '../constants';
 import { useAuth } from './AuthContext';
 
 const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => void }> = ({ projects, onDelete }) => {
