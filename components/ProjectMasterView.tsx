@@ -1,21 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  ChevronLeft, Phone, Mail, MapPin, 
-  Calendar, Layers, Target, DollarSign, 
+import {
+  ChevronLeft, Phone, Mail, MapPin,
+  Calendar, Layers, Target, DollarSign,
   Share2, MessageSquare, Download, Sparkles,
   FileText, Clock, Camera, Eye, ShieldCheck,
   CheckCircle2, ArrowUpRight, Award, Expand,
-  Check, X, User, Undo2, AlertCircle, Trash2
+  Check, X, User, Undo2, AlertCircle, Trash2,
+  Image, Package, Upload, Plus
 } from 'lucide-react';
 import { Project } from '../types';
-import ProjectPresentation from './ProjectPresentation';
 import ProjectContractTab from './ProjectContractTab';
 import ProjectCalendar from './ProjectCalendar';
 import ProjectArtifacts from './ProjectArtifacts';
-import ProjectProposalIA from './ProjectProposalIA';
 import ProjectScopeIA from './ProjectScopeIA';
 import { MOCK_TEAM, MOCK_PARTNERS, STAGES } from '../constants';
 import { MOCK_OCCURRENCES } from '../services/mockData';
@@ -31,31 +30,38 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const initialTab = (searchParams.get('tab') as any) || 'presentation';
-  
+  const initialTab = (searchParams.get('tab') as any) || 'resumo';
+
   const project = projects.find(p => p.id === id);
-  const [activeTab, setActiveTab] = useState<'presentation' | 'contract' | 'tarefas' | 'timeline' | 'calendar' | 'gallery' | 'artifacts' | 'proposal' | 'occurrences' | 'scope'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'resumo' | 'contract' | 'tarefas' | 'timeline' | 'calendar' | 'gallery' | 'artifacts' | 'occurrences' | 'scope'>(initialTab);
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingOccurrence, setEditingOccurrence] = useState<any | null>(null);
   const [occurrences, setOccurrences] = useState(MOCK_OCCURRENCES);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab');
     if (tabFromUrl) setActiveTab(tabFromUrl as any);
   }, [location.search]);
 
-  const handleAddPhotoLog = () => {
-    if (!project) return;
-    const newLogEntry = {
-      id: `pl_new_${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
-      author: 'Diretor Guilherme',
-      notes: 'Novo registro adicionado ao diário de obra a partir do sistema.',
-      images: ['https://images.unsplash.com/photo-1620138600155-816995642a8b?auto=format&fit=crop&q=80&w=600']
-    };
-    const updatedProject = { ...project, photoLog: [newLogEntry, ...project.photoLog] };
-    updateProject(updatedProject);
+  const handlePhotoUpload = (files: FileList | null) => {
+    if (!project || !files || files.length === 0) return;
+    const readers = Array.from(files).map(file => new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }));
+    Promise.all(readers).then(base64Images => {
+      const newLogEntry = {
+        id: `pl_${Date.now()}`,
+        date: new Date().toISOString().split('T')[0],
+        author: project.responsible || 'Equipe',
+        notes: 'Registro fotográfico adicionado.',
+        images: base64Images
+      };
+      updateProject({ ...project, photoLog: [newLogEntry, ...(project.photoLog || [])] });
+    });
   };
   
   const handleToggleTask = (taskId: string) => {
@@ -248,21 +254,29 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
            </div>
         </div>
 
-        <div className="flex gap-6 border-b border-stone-200 dark:border-white/5 mb-4 overflow-x-auto no-scrollbar shrink-0 print:hidden">
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 mb-4 shrink-0 print:hidden">
           {[
-            { id: 'presentation', label: 'Resumo', icon: Eye },
-            { id: 'contract', label: 'Contrato & Protocolos', icon: FileText },
+            { id: 'resumo', label: 'Resumo', icon: Eye },
+            { id: 'contract', label: 'Contrato', icon: FileText },
             { id: 'tarefas', label: 'Checklist', icon: CheckCircle2 },
             { id: 'timeline', label: 'Fluxo', icon: Clock },
             { id: 'calendar', label: 'Agenda', icon: Calendar },
             { id: 'gallery', label: 'Diário', icon: Camera },
-            { id: 'artifacts', label: 'Documentos', icon: Layers },
+            { id: 'artifacts', label: 'Docs', icon: Layers },
             { id: 'occurrences', label: 'Ocorrências', icon: AlertCircle },
             { id: 'scope', label: 'Escopo IA', icon: Sparkles },
           ].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`pb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-gold' : 'text-stone-400 hover:text-stone-900 dark:hover:text-white'}`}>
-              <tab.icon size={12} /> {tab.label}
-              {activeTab === tab.id && <motion.div layoutId="activeTabMaster" className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-gold" />}
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all text-center ${
+                activeTab === tab.id
+                  ? 'bg-stone-950 dark:bg-gold/10 border-gold/60 text-gold shadow-sm'
+                  : 'bg-white dark:bg-white/5 border-stone-200 dark:border-white/10 text-stone-500 dark:text-stone-400 hover:border-gold/30 hover:text-stone-900 dark:hover:text-white'
+              }`}
+            >
+              <tab.icon size={16} />
+              <span className="text-[8px] font-bold uppercase tracking-wider leading-tight">{tab.label}</span>
             </button>
           ))}
         </div>
@@ -270,8 +284,100 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
         <div className="flex-1 overflow-hidden pb-4">
           <AnimatePresence mode="wait">
             <motion.div key={activeTab} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="h-full">
-              {activeTab === 'presentation' && <ProjectPresentation project={project} />}
-              
+              {activeTab === 'resumo' && (
+                <div className="h-full overflow-y-auto custom-scroll space-y-6 pb-8">
+                  {/* Header pitch */}
+                  <div className="bg-stone-950 text-white p-6 md:p-8 rounded-[2rem] relative overflow-hidden">
+                    <div className="relative z-10">
+                      <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Resumo do Projeto</span>
+                      <h2 className="text-3xl font-serif font-bold mt-1 mb-2">{project.clientName}</h2>
+                      <p className="text-stone-400 text-sm italic max-w-xl">{project.concept || `Projeto de ${project.projectType} para ${project.clientName}.`}</p>
+                    </div>
+                    <div className="absolute top-0 right-0 w-56 h-56 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
+                  </div>
+
+                  {/* KPIs */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Tipo de Obra', value: project.projectType, icon: Package },
+                      { label: 'Valor Total', value: `R$ ${project.value.toLocaleString('pt-BR')}`, icon: DollarSign },
+                      { label: 'Pagamento', value: project.paymentMethod, icon: FileText },
+                      { label: 'Entrega Prevista', value: project.estimatedDelivery ? new Date(project.estimatedDelivery).toLocaleDateString('pt-BR') : 'A definir', icon: Calendar },
+                    ].map((item, i) => (
+                      <div key={i} className="bg-white dark:bg-white/5 border border-stone-100 dark:border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+                        <div className="w-8 h-8 bg-gold/10 text-gold rounded-lg flex items-center justify-center">
+                          <item.icon size={16} />
+                        </div>
+                        <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest">{item.label}</p>
+                        <p className="text-sm font-serif font-bold text-stone-900 dark:text-white">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Materiais */}
+                  {project.materials && project.materials.length > 0 && (
+                    <div className="bg-white dark:bg-white/5 border border-stone-100 dark:border-white/10 rounded-2xl p-5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-4">Materiais Especificados</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {project.materials.filter(Boolean).map((m, i) => (
+                          <span key={i} className="px-3 py-1.5 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-300">
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Escopo detalhado */}
+                  {((project.detailedScope && project.detailedScope.length > 0) || (project.contractData?.scope && project.contractData.scope.length > 0)) && (
+                    <div className="bg-white dark:bg-white/5 border border-stone-100 dark:border-white/10 rounded-2xl p-5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-4">Escopo do Trabalho</h4>
+                      <div className="space-y-3">
+                        {(project.detailedScope && project.detailedScope.length > 0
+                          ? project.detailedScope
+                          : (project.contractData?.scope || []).map(s => ({ title: s, items: [] }))
+                        ).map((s, i) => (
+                          <div key={i} className="flex items-start gap-3 p-3 bg-stone-50 dark:bg-white/5 rounded-xl">
+                            <div className="w-5 h-5 rounded bg-gold/10 text-gold flex items-center justify-center shrink-0 mt-0.5">
+                              <CheckCircle2 size={12} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-serif font-bold text-stone-900 dark:text-white">{s.title}</p>
+                              {s.items && s.items.length > 0 && (
+                                <p className="text-xs text-stone-400 mt-0.5">{s.items.join(' · ')}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Responsabilidades do cliente */}
+                  {project.contractData?.responsibilities?.client && project.contractData.responsibilities.client.length > 0 && (
+                    <div className="bg-white dark:bg-white/5 border border-stone-100 dark:border-white/10 rounded-2xl p-5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-4">Responsabilidades do Cliente</h4>
+                      <ul className="space-y-2">
+                        {project.contractData.responsibilities.client.map((r, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
+                            <span className="text-gold mt-1">•</span>
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Observações */}
+                  {project.notes && (
+                    <div className="bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl p-5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-2">Observações</h4>
+                      <p className="text-sm text-stone-700 dark:text-stone-300 italic">{project.notes}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {activeTab === 'contract' && <ProjectContractTab project={project} updateProject={updateProject} />}
               
               {activeTab === 'tarefas' && (
@@ -342,9 +448,9 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
                     </button>
                   </div>
                   <div className="flex-1 overflow-y-auto custom-scroll">
-                    <div className="max-w-3xl mx-auto py-8 px-4 relative">
-                      <div className="absolute left-[31px] top-8 bottom-8 w-px bg-stone-200 dark:bg-white/10" />
-                      <div className="space-y-4 md:space-y-6 relative">
+                    <div className="max-w-2xl mx-auto py-4 px-4 relative">
+                      <div className="absolute left-[19px] top-4 bottom-4 w-px bg-stone-200 dark:bg-white/10" />
+                      <div className="space-y-2 relative">
                         {STAGES.map((stage, idx) => {
                           const currentStageIndex = STAGES.findIndex(s => s.id === project.status);
                           const isCompleted = idx < currentStageIndex;
@@ -352,17 +458,17 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
                           const timelineEvent = project.timeline.find(t => t.id.startsWith(stage.id));
                           const eventDateStr = timelineEvent?.date ? new Date(timelineEvent.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : 'A programar';
                           return (
-                            <div key={stage.id} className="flex items-start gap-12 py-4 group">
-                              <div className={`z-10 shrink-0 w-16 h-16 rounded-3xl flex items-center justify-center border-4 border-ivory dark:border-onyx shadow-lg transition-all ${isCompleted ? 'bg-emerald-600 text-white' : isCurrent ? 'bg-stone-900 dark:bg-gold text-white dark:text-black' : 'bg-stone-100 dark:bg-white/5 text-stone-400'}`}>
-                                {isCompleted ? <Check size={32}/> : <span className="text-2xl font-serif font-bold italic">{idx + 1}</span>}
+                            <div key={stage.id} className="flex items-start gap-5 py-2 group">
+                              <div className={`z-10 shrink-0 w-10 h-10 rounded-xl flex items-center justify-center border-2 border-ivory dark:border-onyx shadow-sm transition-all ${isCompleted ? 'bg-emerald-600 text-white' : isCurrent ? 'bg-stone-900 dark:bg-gold text-white dark:text-black' : 'bg-stone-100 dark:bg-white/5 text-stone-400'}`}>
+                                {isCompleted ? <Check size={16}/> : <span className="text-sm font-serif font-bold italic">{idx + 1}</span>}
                               </div>
-                              <div className="pt-1">
-                                <h4 className={`text-2xl font-serif font-bold ${isCompleted || isCurrent ? 'text-stone-900 dark:text-white' : 'text-stone-300 dark:text-stone-700'}`}>{stage.label}</h4>
-                                <p className={`text-sm mt-2 leading-relaxed max-w-lg ${isCompleted || isCurrent ? 'text-stone-600 dark:text-stone-400' : 'text-stone-300 dark:text-stone-700'} italic`}>
+                              <div className="flex-1 pt-1">
+                                <div className="flex items-center justify-between gap-2">
+                                  <h4 className={`text-sm font-serif font-bold ${isCompleted || isCurrent ? 'text-stone-900 dark:text-white' : 'text-stone-300 dark:text-stone-600'}`}>{stage.label}</h4>
+                                  <span className={`text-[8px] font-bold uppercase tracking-widest shrink-0 ${isCompleted || isCurrent ? 'text-gold' : 'text-stone-300 dark:text-stone-700'}`}>{eventDateStr}</span>
+                                </div>
+                                <p className={`text-xs leading-relaxed ${isCompleted || isCurrent ? 'text-stone-500 dark:text-stone-400' : 'text-stone-300 dark:text-stone-700'} italic`}>
                                   {stage.description}
-                                </p>
-                                <p className={`mt-3 text-xs font-bold uppercase tracking-widest ${isCompleted || isCurrent ? 'text-gold' : 'text-stone-300 dark:text-stone-700'}`}>
-                                    {eventDateStr}
                                 </p>
                               </div>
                             </div>
@@ -377,8 +483,6 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
               {activeTab === 'calendar' && <div className="h-full overflow-y-auto custom-scroll py-2"><ProjectCalendar project={project} /></div>}
               
               {activeTab === 'artifacts' && <div className="h-full overflow-y-auto custom-scroll py-2"><ProjectArtifacts project={project} updateProject={updateProject} /></div>}
-
-              {activeTab === 'proposal' && <div className="h-full overflow-y-auto custom-scroll py-2"><ProjectProposalIA project={project} /></div>}
 
               {activeTab === 'scope' && <ProjectScopeIA project={project} updateProject={updateProject} />}
 
@@ -443,39 +547,54 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
                 </div>
               )}
 
-              {activeTab === 'gallery' && <div className="h-full overflow-y-auto custom-scroll space-y-6 py-2">
-                   <div className="flex justify-end">
-                      <button 
-                        onClick={handleAddPhotoLog}
-                        className="px-5 py-2.5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl text-[9px] font-bold uppercase tracking-widest text-stone-600 dark:text-gold flex items-center gap-2 hover:border-gold/30 transition-all shadow-sm"
-                      >
-                        <Camera size={14} /> Adicionar Registro Fotográfico
-                      </button>
-                   </div>
-                   <div className="grid grid-cols-1 gap-6">
-                     {project.photoLog.map(entry => (
-                       <div key={entry.id} className="p-6 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl">
-                          <div className="flex justify-between items-start mb-4">
-                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-lg bg-stone-50 dark:bg-white/5 flex items-center justify-center text-stone-400 border border-stone-200 dark:border-white/10"><FileText size={18} /></div>
-                                <div>
-                                  <p className="text-[8px] text-gold font-bold uppercase tracking-[0.2em] mb-0.5">{new Date(entry.date).toLocaleDateString('pt-BR', {day: '2-digit', month: 'long', year: 'numeric'})}</p>
-                                  <h4 className="text-sm font-serif font-bold text-stone-950 dark:text-white">{entry.author}</h4>
-                                </div>
-                             </div>
+              {activeTab === 'gallery' && (
+                <div className="h-full overflow-y-auto custom-scroll space-y-6 py-2">
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={e => handlePhotoUpload(e.target.files)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => photoInputRef.current?.click()}
+                      className="px-5 py-2.5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl text-[9px] font-bold uppercase tracking-widest text-stone-600 dark:text-gold flex items-center gap-2 hover:border-gold/30 transition-all shadow-sm"
+                    >
+                      <Upload size={14} /> Adicionar Fotos
+                    </button>
+                  </div>
+                  {(project.photoLog || []).length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl text-stone-400">
+                      <Camera size={32} className="mb-3" />
+                      <p className="text-sm font-serif">Nenhum registro fotográfico ainda.</p>
+                      <p className="text-xs mt-1">Clique em "Adicionar Fotos" para enviar imagens da obra.</p>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 gap-6">
+                    {(project.photoLog || []).map(entry => (
+                      <div key={entry.id} className="p-5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-8 h-8 rounded-lg bg-stone-50 dark:bg-white/5 flex items-center justify-center text-stone-400 border border-stone-200 dark:border-white/10"><Camera size={14} /></div>
+                          <div>
+                            <p className="text-[8px] text-gold font-bold uppercase tracking-[0.2em]">{new Date(entry.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                            <h4 className="text-xs font-bold text-stone-900 dark:text-white">{entry.author}</h4>
                           </div>
-                          <p className="text-xs text-stone-600 dark:text-stone-300 font-serif italic mb-4">"{entry.notes}"</p>
-                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                             {entry.images.map((img, idx) => (
-                               <div key={idx} className="aspect-video rounded-xl overflow-hidden border border-stone-200 dark:border-onyx shadow-sm relative group cursor-pointer">
-                                  <img src={img} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
-                               </div>
-                             ))}
-                          </div>
-                       </div>
-                     ))}
-                   </div>
-                </div>}
+                        </div>
+                        {entry.notes && <p className="text-xs text-stone-500 italic mb-3">"{entry.notes}"</p>}
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                          {entry.images.map((img, idx) => (
+                            <div key={idx} className="aspect-video rounded-xl overflow-hidden border border-stone-200 dark:border-onyx shadow-sm cursor-pointer">
+                              <img src={img} alt="" className="w-full h-full object-cover hover:scale-105 transition-all duration-500" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

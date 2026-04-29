@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 
 import EntryPage from './components/EntryPage';
+import ErrorBoundary from './components/ErrorBoundary';
 import Dashboard from './components/Dashboard';
 import KanbanBoard from './components/KanbanBoard';
 import SalesFlow from './components/SalesFlow';
@@ -428,11 +429,13 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <HashRouter>
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  </HashRouter>
+  <ErrorBoundary>
+    <HashRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </HashRouter>
+  </ErrorBoundary>
 );
 
 export default App;

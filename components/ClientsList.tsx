@@ -4,10 +4,11 @@ import { Search, UserPlus, Filter, ChevronRight, DollarSign, Sparkles, Trash2, A
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
-import { MOCK_USER } from '../constants';
+import { useAuth } from './AuthContext';
 import ProjectFormWizard from './ProjectFormWizard';
 
 const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => void }> = ({ projects, onDelete }) => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [wizardClient, setWizardClient] = useState<{ name: string; email: string; phone: string } | null>(null);
@@ -30,7 +31,7 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
               <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Gestão de Clientes</span>
             </div>
             <h3 className="text-2xl font-serif leading-tight">
-              Olá, {MOCK_USER.name.split(' ')[1] || MOCK_USER.name}
+              Olá, {user?.name?.split(' ')[0] || 'Artesão'}
             </h3>
           </div>
           <div className="hidden md:flex items-center gap-6">

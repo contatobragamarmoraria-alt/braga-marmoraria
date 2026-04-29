@@ -352,22 +352,14 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [googleAuth, setGoogleAuth] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(true);
-  const [showWelcome, setShowWelcome] = useState(true);
   const [occurrences, setOccurrences] = useState<any[]>([]);
 
   useEffect(() => {
     occurrenceService.subscribeToOccurrences(setOccurrences);
   }, []);
-  
+
   const navigate = useNavigate();
   const currentDate = new Date();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 30000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     checkGoogleAuth();
@@ -576,67 +568,6 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
               {loadingGoogle && <RefreshCw size={16} className="animate-spin text-stone-400" />}
            </div>
       </div>
-
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0, marginTop: 0, scale: 0.95 }}
-            animate={{ opacity: 1, height: 'auto', marginTop: 16, scale: 1 }}
-            exit={{ opacity: 0, height: 0, scale: 0.95, overflow: 'hidden' }}
-            className="bg-stone-950 dark:bg-white/5 text-white p-5 md:p-6 rounded-[2rem] relative shrink-0 shadow-sm"
-            style={{ overflow: 'hidden' }}
-          >
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Sparkles size={20} className="text-gold" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Bem-vindo de volta</span>
-                </div>
-                <h3 className="text-3xl md:text-4xl font-serif leading-tight">
-                  Olá, {user?.name?.split(' ')[0] || 'Artesão'}
-                </h3>
-                <p className="text-stone-400 text-sm font-serif italic max-w-lg">
-                  "A excelência na marmoraria não é um ato, mas um hábito de precisão e artesania."
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 min-w-[240px]">
-                <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-gold">Status do Sistema</span>
-                    <span className="text-[10px] font-bold text-white">Pronto</span>
-                  </div>
-                  <p className="text-[8px] text-stone-400 uppercase tracking-tighter">Sincronizado e Operacional</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-6">
-                <div 
-                  className="text-center md:text-right cursor-pointer group"
-                  onClick={() => navigate('/app/producao')}
-                >
-                  <p className="text-[8px] font-bold uppercase tracking-widest text-stone-500 mb-1 group-hover:text-gold transition-colors">Projetos Ativos</p>
-                  <p className="text-xl font-serif text-gold">{projects.filter(p => p.status !== 'LEAD_FECHADO' && p.status !== 'FINALIZADO').length}</p>
-                </div>
-                <div className="h-10 w-px bg-white/10 hidden md:block" />
-                <div 
-                  className="text-center md:text-right cursor-pointer group"
-                  onClick={() => setIsAlertsModalOpen(true)}
-                >
-                  <p className="text-[8px] font-bold uppercase tracking-widest text-stone-500 mb-1 group-hover:text-red-400 transition-colors">Alertas Críticos</p>
-                  <p className="text-2xl font-serif text-red-400 group-hover:scale-110 transition-transform origin-right">{alertCounts.overdue + alertCounts.red}</p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gold/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
-            <motion.div 
-              initial={{ width: '100%' }}
-              animate={{ width: '0%' }}
-              transition={{ duration: 30, ease: 'linear' }}
-              className="absolute bottom-0 left-0 h-1.5 bg-gold z-20"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
          {kpiCards.map((item, i) => (

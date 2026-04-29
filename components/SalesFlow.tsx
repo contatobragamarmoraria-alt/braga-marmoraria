@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, Megaphone, UserCheck, 
+import {
+  Plus, Megaphone, UserCheck,
   FileCheck, Target, Stethoscope, Trash2, GripVertical, X, ShieldCheck,
-  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload, Sparkles
+  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_USER } from '../constants';
 
 const ICON_MAP: Record<string, any> = {
   Megaphone, UserCheck, FileCheck, Target, Stethoscope, ShieldCheck, Calendar
@@ -80,12 +79,6 @@ const SalesFlow: React.FC = () => {
   const [showAutoSaveToast, setShowAutoSaveToast] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedStages, setExpandedStages] = useState<Set<string>>(new Set(INITIAL_STAGES.map(s => s.id)));
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(false), 30000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const toggleStage = (stageId: string) => {
     const next = new Set(expandedStages);
@@ -173,37 +166,6 @@ const SalesFlow: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 relative min-h-full pb-8">
-      {/* Welcome Section */}
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div 
-            initial={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="bg-stone-950 dark:bg-white/5 text-white p-6 rounded-[2rem] relative shrink-0 shadow-lg"
-          >
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-gold" />
-                  <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Arquitetura Comercial</span>
-                </div>
-                <h3 className="text-2xl font-serif leading-tight">
-                  Olá, {MOCK_USER.name.split(' ')[1] || MOCK_USER.name}
-                </h3>
-              </div>
-              <div className="hidden md:flex items-center gap-6">
-                <div className="text-right">
-                  <p className="text-[7px] font-bold uppercase tracking-widest text-stone-500 mb-0.5">Leads Ativos</p>
-                  <p className="text-xl font-serif text-gold">12</p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <motion.div layout className="flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 bg-white dark:bg-onyx p-4 px-6 rounded-[2rem] border border-stone-200 dark:border-white/5 shadow-sm">
         <div className="flex items-center gap-4 text-center md:text-left">
           <div className="space-y-0.5">
@@ -217,6 +179,35 @@ const SalesFlow: React.FC = () => {
         
         <div className="flex flex-wrap justify-center gap-2 w-full md:w-auto">
            <button onClick={() => setStages([...stages, { id: Math.random().toString(36).substr(2, 9), label: 'Novo Estágio', iconName: 'Target', color: 'text-stone-400', items: [] }])} className="flex-1 md:flex-none justify-center gold-bg px-4 md:px-5 py-2 text-black rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg flex items-center gap-2 hover:scale-105 transition-all"><Plus size={14} /> Novo Estágio</button>
+        </div>
+      </motion.div>
+
+      {/* Apresentação Institucional */}
+      <motion.div layout className="bg-stone-950 text-white rounded-[2rem] overflow-hidden shrink-0">
+        <div className="p-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gold/20 text-gold rounded-lg flex items-center justify-center">
+              <Target size={16} />
+            </div>
+            <div>
+              <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Apresentação Institucional</p>
+              <h3 className="text-sm font-serif font-bold">O que o cliente pode esperar</h3>
+            </div>
+          </div>
+        </div>
+        <div className="px-5 pb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { num: '01', title: 'Primeiro Contato', desc: 'Atendimento personalizado e levantamento das necessidades do projeto.' },
+            { num: '02', title: 'Visita Técnica', desc: 'Medição a laser e análise das condições do ambiente para execução.' },
+            { num: '03', title: 'Proposta & Contrato', desc: 'Proposta detalhada com escopo, materiais, valores e prazos definidos.' },
+            { num: '04', title: 'Produção & Entrega', desc: 'Fabricação artesanal em atelier próprio e instalação por equipe especializada.' },
+          ].map((step) => (
+            <div key={step.num} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-gold uppercase tracking-widest">{step.num}</span>
+              <h4 className="text-sm font-serif font-bold mt-1 mb-1">{step.title}</h4>
+              <p className="text-[10px] text-stone-400 leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
         </div>
       </motion.div>
 
