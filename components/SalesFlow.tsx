@@ -4,11 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Megaphone, UserCheck,
   FileCheck, Target, Stethoscope, Trash2, GripVertical, X, ShieldCheck,
-  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload, Sparkles
+  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_USER } from '../constants';
-import { useAuth } from './AuthContext';
 
 const ICON_MAP: Record<string, any> = {
   Megaphone, UserCheck, FileCheck, Target, Stethoscope, ShieldCheck, Calendar
@@ -71,7 +69,6 @@ const INITIAL_STAGES: SalesStage[] = [
 
 const SalesFlow: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [stages, setStages] = useState<SalesStage[]>(() => {
     const saved = localStorage.getItem('braga_sales_stages_v3');
     return saved ? JSON.parse(saved) : INITIAL_STAGES;
@@ -82,12 +79,6 @@ const SalesFlow: React.FC = () => {
   const [showAutoSaveToast, setShowAutoSaveToast] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedStages, setExpandedStages] = useState<Set<string>>(new Set(INITIAL_STAGES.map(s => s.id)));
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(false), 30000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const toggleStage = (stageId: string) => {
     const next = new Set(expandedStages);
@@ -175,37 +166,6 @@ const SalesFlow: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4 relative min-h-full pb-8">
-      {/* Welcome Section */}
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div 
-            initial={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="bg-stone-950 dark:bg-white/5 text-white p-6 rounded-[2rem] relative shrink-0 shadow-lg"
-          >
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-gold" />
-                  <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Arquitetura Comercial</span>
-                </div>
-                <h3 className="text-2xl font-serif leading-tight">
-                  Olá, {user?.name?.split(' ')[0] || 'Artesão'}
-                </h3>
-              </div>
-              <div className="hidden md:flex items-center gap-6">
-                <div className="text-right">
-                  <p className="text-[7px] font-bold uppercase tracking-widest text-stone-500 mb-0.5">Leads Ativos</p>
-                  <p className="text-xl font-serif text-gold">12</p>
-                </div>
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <motion.div layout className="flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 bg-white dark:bg-onyx p-4 px-6 rounded-[2rem] border border-stone-200 dark:border-white/5 shadow-sm">
         <div className="flex items-center gap-4 text-center md:text-left">
           <div className="space-y-0.5">
