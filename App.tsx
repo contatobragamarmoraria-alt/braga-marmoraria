@@ -1,16 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { 
+import {
   LayoutDashboard, Columns, X, Home,
   BarChart3, PanelLeftClose, PanelLeft,
   ChevronLeft, Sparkles, Sun, Moon, TrendingUp,
   Settings, Megaphone, Monitor, Users, MessageSquare,
-  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog
+  Layout, LayoutTemplate, Bot, LogOut, History, Calendar, Trash2, LogIn, User, Compass, Library, UserCog, Plus
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import EntryPage from './components/EntryPage';
+import ErrorBoundary from './components/ErrorBoundary';
 import Dashboard from './components/Dashboard';
 import KanbanBoard from './components/KanbanBoard';
 import SalesFlow from './components/SalesFlow';
@@ -425,11 +426,13 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <HashRouter>
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  </HashRouter>
+  <ErrorBoundary>
+    <HashRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </HashRouter>
+  </ErrorBoundary>
 );
 
 export default App;

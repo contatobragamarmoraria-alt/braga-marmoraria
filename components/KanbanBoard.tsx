@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Clock, ChevronRight, ChevronLeft, Calendar, X, Layers, Briefcase, User, CheckCircle, Sparkles, Trash2 } from 'lucide-react';
 import { STAGES, MOCK_TEAM, MOCK_USER } from '../constants';
 import { Project, ProjectStatus, ProjectTask } from '../types';
+import { useAuth } from './AuthContext';
 import ProjectDetailsModal from './ProjectDetailsModal';
 import ProjectFormWizard from './ProjectFormWizard';
 
@@ -119,6 +120,7 @@ interface Props {
 }
 
 const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) => {
+  const { user } = useAuth();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedStages, setExpandedStages] = useState<Set<ProjectStatus>>(new Set());
@@ -192,7 +194,7 @@ const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) =
               <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Gestão Operacional</span>
             </div>
             <h3 className="text-2xl font-serif leading-tight">
-              Olá, {MOCK_USER.name.split(' ')[1] || MOCK_USER.name}
+              Olá, {user?.name?.split(' ')[0] || 'Artesão'}
             </h3>
           </div>
           <div className="hidden md:flex items-center gap-6">

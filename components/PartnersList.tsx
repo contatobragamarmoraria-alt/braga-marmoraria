@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Search, Phone, Mail, Building, Globe, ArrowUpRight, MessageSquare, Users, Sparkles } from 'lucide-react';
 import { MOCK_PARTNERS, MOCK_USER } from '../constants';
+import { useAuth } from './AuthContext';
 
 const PartnersList: React.FC = () => {
+  const { user } = useAuth();
   const [filter, setFilter] = useState<'ALL' | 'SUPPLIER' | 'STAKEHOLDER'>('ALL');
   const partners = filter === 'ALL' ? MOCK_PARTNERS : MOCK_PARTNERS.filter(p => p.type === filter);
 
@@ -18,7 +20,7 @@ const PartnersList: React.FC = () => {
               <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Ecossistema de Parceiros</span>
             </div>
             <h3 className="text-2xl font-serif leading-tight">
-              Olá, {MOCK_USER.name.split(' ')[1] || MOCK_USER.name}
+              Olá, {user?.name?.split(' ')[0] || 'Artesão'}
             </h3>
           </div>
           <div className="hidden md:flex items-center gap-6">

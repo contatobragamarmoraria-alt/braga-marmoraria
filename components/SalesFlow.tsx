@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, Megaphone, UserCheck, 
+import {
+  Plus, Megaphone, UserCheck,
   FileCheck, Target, Stethoscope, Trash2, GripVertical, X, ShieldCheck,
   Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload, Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { MOCK_USER } from '../constants';
+import { useAuth } from './AuthContext';
 
 const ICON_MAP: Record<string, any> = {
   Megaphone, UserCheck, FileCheck, Target, Stethoscope, ShieldCheck, Calendar
@@ -70,6 +71,7 @@ const INITIAL_STAGES: SalesStage[] = [
 
 const SalesFlow: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stages, setStages] = useState<SalesStage[]>(() => {
     const saved = localStorage.getItem('braga_sales_stages_v3');
     return saved ? JSON.parse(saved) : INITIAL_STAGES;
@@ -189,7 +191,7 @@ const SalesFlow: React.FC = () => {
                   <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Arquitetura Comercial</span>
                 </div>
                 <h3 className="text-2xl font-serif leading-tight">
-                  Olá, {MOCK_USER.name.split(' ')[1] || MOCK_USER.name}
+                  Olá, {user?.name?.split(' ')[0] || 'Artesão'}
                 </h3>
               </div>
               <div className="hidden md:flex items-center gap-6">
