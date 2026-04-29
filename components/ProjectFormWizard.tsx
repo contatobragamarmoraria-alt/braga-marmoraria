@@ -39,6 +39,7 @@ interface ScopeData {
   paymentInstallments: number;
   desiredDate: string;
   notes: string;
+  scopeDescription: string;
   clientResponsibilities: string[];
 }
 
@@ -129,12 +130,12 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; 
     if (saved) {
       try {
         const draft = JSON.parse(saved);
-        return draft.scope || { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
+        return draft.scope || { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', scopeDescription: '', clientResponsibilities: [] };
       } catch {
-        return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
+        return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', scopeDescription: '', clientResponsibilities: [] };
       }
     }
-    return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
+    return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', scopeDescription: '', clientResponsibilities: [] };
   });
 
   const validateStep = (stepNum: number): boolean => {
@@ -283,7 +284,7 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; 
         clientEmail: client.email,
         phone: client.phone,
         projectType: scope.items[0]?.type || 'Obra',
-        concept: scope.notes || `Projeto para ${client.name}`,
+        concept: scope.scopeDescription || scope.notes || `Projeto para ${client.name}`,
         value: scope.totalValue,
         paymentMethod: scope.paymentForm === 'parcelado' ? `${scope.paymentInstallments}x` : 'À Vista',
         startDate: new Date().toISOString().split('T')[0],
@@ -750,6 +751,21 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; 
                   </div>
                 </div>
 
+                {/* Scope Description Section */}
+                <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4">
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 dark:text-stone-400 block mb-2">Resumo do Escopo / Descrição do Projeto</label>
+                    <p className="text-xs text-stone-500 dark:text-stone-500 mb-2">Descreva o escopo do projeto como aparece no contrato. Ex: Bancada com fechamento em granito preto absoluto, tamanho 2,5m x 0,6m, etc.</p>
+                    <textarea
+                      value={scope.scopeDescription}
+                      onChange={(e) => setScope({ ...scope, scopeDescription: e.target.value })}
+                      placeholder="Bancada com fechamento, 2,5 metros de comprimento, granito preto absoluto com 2cm de espessura, inclui meia volta em U e acabamento polido..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-stone-300 dark:border-white/10 rounded bg-white dark:bg-white/5 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-gold"
+                    />
+                  </div>
+                </div>
+
                 {/* Payment Section */}
                 <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-4">
                   <h4 className="font-semibold text-stone-900 dark:text-white">Condições de Pagamento</h4>
@@ -833,6 +849,14 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; 
                 className="space-y-6"
               >
                 <h3 className="text-lg font-bold text-stone-900 dark:text-white mb-6">Revisão do Projeto</h3>
+
+                {/* Scope Description */}
+                {scope.scopeDescription && (
+                  <div className="bg-gold/10 dark:bg-gold/5 border-l-4 border-gold rounded-lg p-4">
+                    <h4 className="font-semibold text-stone-900 dark:text-white text-sm mb-2">Resumo do Escopo</h4>
+                    <p className="text-sm text-stone-700 dark:text-stone-300 whitespace-pre-wrap">{scope.scopeDescription}</p>
+                  </div>
+                )}
 
                 {/* Cliente */}
                 <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-3">
