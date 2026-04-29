@@ -222,12 +222,12 @@ const SalesFlow: React.FC = () => {
               layout
               onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
               onDrop={(e) => handleDropToStage(e, stage.id)}
-              animate={{ 
-                width: isExpanded ? '100%' : 60,
+              animate={{
+                width: isExpanded ? '100%' : 52,
                 flex: isExpanded ? 1 : 'none'
               }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-              style={{ minWidth: isExpanded ? '240px' : '60px' }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              style={{ minWidth: isExpanded ? '200px' : '52px' }}
               className={`relative group flex flex-col h-full rounded-[2rem] border transition-colors duration-500 overflow-hidden shrink-0 
                 ${isExpanded ? 'bg-stone-50/50 dark:bg-stone-900/30 border-stone-200 dark:border-white/10' : 'bg-white dark:bg-onyx border-stone-100 dark:border-white/5 hover:border-gold/30'}
                 ${isDragging ? 'border-dashed border-stone-300 dark:border-white/20' : ''}`}
@@ -266,15 +266,14 @@ const SalesFlow: React.FC = () => {
                           // @ts-ignore
                           onDragEnd={handleDragEnd}
                           onClick={(e) => toggleSelection(item.id, e)}
-                          className={`group relative flex flex-col p-4 rounded-2xl cursor-grab active:cursor-grabbing shadow-sm transition-all border ${isSelected ? 'bg-gold/10 border-gold shadow-gold/10 scale-[1.02] z-10' : 'bg-white dark:bg-onyx/40 border-stone-100 dark:border-white/5 hover:border-gold/30'}`}
+                          className={`group relative flex flex-col p-2.5 rounded-xl cursor-grab active:cursor-grabbing shadow-sm transition-all border ${isSelected ? 'bg-gold/10 border-gold shadow-gold/10 scale-[1.02] z-10' : 'bg-white dark:bg-onyx/40 border-stone-100 dark:border-white/5 hover:border-gold/30'}`}
                         >
-                          <div className="flex items-center gap-2 mb-2">
+                          <div className="flex items-center gap-2">
                             <GripVertical size={12} className={isSelected ? 'text-gold' : 'text-stone-300'} />
-                            <h4 className={`flex-1 text-sm font-serif font-bold uppercase tracking-tight line-clamp-1 ${isSelected ? 'text-stone-950 dark:text-gold' : 'text-stone-900 dark:text-stone-300'}`}>{item.label}</h4>
-                            <button onClick={(e) => { e.stopPropagation(); setEditingItem({ stageId: stage.id, item }); }} className="p-1.5 text-stone-400 hover:text-gold hover:bg-gold/10 rounded-md transition-all"><Edit3 size={14} /></button>
+                            <h4 className={`flex-1 text-xs font-serif font-bold uppercase tracking-tight line-clamp-2 leading-snug ${isSelected ? 'text-stone-950 dark:text-gold' : 'text-stone-900 dark:text-stone-300'}`}>{item.label}</h4>
+                            <button onClick={(e) => { e.stopPropagation(); setEditingItem({ stageId: stage.id, item }); }} className="p-1 text-stone-300 hover:text-gold hover:bg-gold/10 rounded-md transition-all shrink-0"><Edit3 size={12} /></button>
                           </div>
-                          {item.description && <p className="text-xs text-stone-400 dark:text-stone-500 italic mb-3 line-clamp-2 leading-relaxed">{item.description}</p>}
-                          <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-white/5">
+                          <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-white/5 mt-2">
                             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1.5"><Calendar size={10}/> {item.date || 'TBD'}</span>
                             <button onClick={(e) => { 
                                e.stopPropagation(); 

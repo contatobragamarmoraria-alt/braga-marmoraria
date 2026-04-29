@@ -20,7 +20,7 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
   const [newPin, setNewPin] = useState('');
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
   const [editingOtherUser, setEditingOtherUser] = useState<AppUser | null>(null);
-  const [avatar, setAvatar] = useState(user.avatar);
+  const [avatar, setAvatar] = useState(() => localStorage.getItem(`user-avatar-${user.id}`) || user.avatar);
   
   const [formData, setFormData] = useState({
     name: user.name,
@@ -49,22 +49,29 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const result = event.target?.result as string;
+    const img = new window.Image();
+    img.onload = async () => {
+      const MAX = 256;
+      const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.75);
+
+      setAvatar(compressed);
+      localStorage.setItem(`user-avatar-${user.id}`, compressed);
+      onUpdate({ avatar: compressed });
+
       try {
-        setAvatar(result);
-        await userService.updateUser(user.id, { avatar: result });
-        onUpdate({ avatar: result });
-        alert('Foto atualizada com sucesso!');
-      } catch (error) {
-        alert('Erro ao atualizar foto.');
-        setAvatar(user.avatar);
+        await userService.updateUser(user.id, { avatar: compressed });
+      } catch {
+        // saved locally, API failure is silent
       }
     };
-    reader.readAsDataURL(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    img.src = URL.createObjectURL(file);
   };
 
   const handlePinUpdate = async () => {

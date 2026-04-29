@@ -234,7 +234,7 @@ const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) =
               layout 
               onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
               onDrop={(e) => handleDropToStage(e, stage.id)}
-              animate={{ width: isExpanded ? 320 : 60 }} 
+              animate={{ width: isExpanded ? 360 : 60 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }} 
               className={`relative group flex flex-col h-full rounded-[2rem] border transition-colors duration-500 overflow-hidden shrink-0 ${isExpanded ? 'bg-stone-50/50 dark:bg-stone-900/30 border-stone-200 dark:border-white/10' : 'bg-white dark:bg-onyx border-stone-100 dark:border-white/5 hover:border-gold/30'} ${isDragging ? 'border-dashed border-stone-300 dark:border-white/20' : ''}`}
             >
@@ -275,7 +275,7 @@ const KanbanBoard: React.FC<Props> = ({ projects, updateProject, addProject }) =
                         onDragStart={(e) => handleDragStart(e, project.id, stage.id)}
                         onDragEnd={handleDragEnd}
                         onClick={() => setSelectedProject(project)} 
-                        className="group bg-white dark:bg-white/5 border border-stone-100 dark:border-white/5 rounded-2xl p-3 hover:border-gold/50 cursor-grab active:cursor-grabbing shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md mb-2"
+                        className="group bg-white dark:bg-white/5 border border-stone-100 dark:border-white/5 rounded-2xl p-4 hover:border-gold/50 cursor-grab active:cursor-grabbing shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md mb-3"
                       >
                         <div className="flex items-center gap-2 mb-2">
                           <img src={project.clientAvatar} className="w-8 h-8 rounded-lg object-cover" />
