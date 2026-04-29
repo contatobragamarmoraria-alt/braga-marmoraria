@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, Shield, Camera, Save, Bell, Lock, LogOut, ChevronRight, Key, Eye, EyeOff, Users, Edit2 } from 'lucide-react';
+import { User, Mail, Phone, Shield, Camera, Save, Bell, Lock, LogOut, LogIn, ChevronRight, Key, Eye, EyeOff, Users, Edit2 } from 'lucide-react';
 import { AppUser } from '../types';
 import { userService } from '../services/userService';
 import { useAuth } from './AuthContext';
