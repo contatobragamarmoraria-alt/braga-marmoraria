@@ -1,14 +1,16 @@
 
 import React, { useState } from 'react';
-import { Search, UserPlus, Filter, ChevronRight, DollarSign, Sparkles, Trash2, AlertCircle } from 'lucide-react';
+import { Search, UserPlus, Filter, ChevronRight, DollarSign, Sparkles, Trash2, AlertCircle, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { MOCK_USER } from '../constants';
+import ProjectFormWizard from './ProjectFormWizard';
 
 const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => void }> = ({ projects, onDelete }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [wizardClient, setWizardClient] = useState<{ name: string; email: string; phone: string } | null>(null);
 
   const activeProjects = projects.filter(p => !p.deletedAt);
 
@@ -103,20 +105,32 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-stone-50 dark:border-white/5 flex items-center justify-between">
+                <div className="pt-2 border-t border-stone-50 dark:border-white/5 flex items-center justify-between gap-1">
                   <div className="flex items-center gap-1 text-stone-900 dark:text-stone-100">
                     <DollarSign size={8} className="text-gold" />
                     <span className="text-[9px] font-serif font-bold">
                       {project.value >= 1000 ? `${(project.value/1000).toFixed(1)}k` : project.value}
                     </span>
                   </div>
-                  <Link 
-                    to={`/client/${project.id}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="px-2 py-1 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-lg text-[7px] font-bold uppercase tracking-widest text-stone-400 hover:text-gold hover:border-gold/30 transition-all"
-                  >
-                    Portal
-                  </Link>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setWizardClient({ name: project.clientName, email: project.clientEmail || '', phone: project.phone || '' });
+                      }}
+                      className="px-2 py-1 bg-gold/10 border border-gold/30 rounded-lg text-[7px] font-bold uppercase tracking-widest text-gold hover:bg-gold hover:text-black transition-all flex items-center gap-1"
+                    >
+                      <Plus size={8} /> Projeto
+                    </button>
+                    <Link
+                      to={`/client/${project.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-2 py-1 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-lg text-[7px] font-bold uppercase tracking-widest text-stone-400 hover:text-gold hover:border-gold/30 transition-all"
+                    >
+                      Portal
+                    </Link>
+                  </div>
                 </div>
               </Link>
               
@@ -183,6 +197,16 @@ const ClientsList: React.FC<{ projects: Project[], onDelete: (id: string) => voi
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {wizardClient && (
+          <ProjectFormWizard
+            initialClient={wizardClient}
+            onClose={() => setWizardClient(null)}
+            onCreated={() => setWizardClient(null)}
+          />
         )}
       </AnimatePresence>
     </div>

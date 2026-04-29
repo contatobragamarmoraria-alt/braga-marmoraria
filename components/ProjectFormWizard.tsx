@@ -73,7 +73,14 @@ const CLIENT_RESPONSIBILITIES = [
   'Responsável por acabamentos'
 ];
 
-const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }> = ({ onClose, onCreated }) => {
+interface InitialClientData {
+  name?: string;
+  cpf?: string;
+  phone?: string;
+  email?: string;
+}
+
+const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; initialClient?: InitialClientData }> = ({ onClose, onCreated, initialClient }) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,10 +88,10 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
   const [showCredentials, setShowCredentials] = useState(false);
 
   const [client, setClient] = useState<ClientData>({
-    name: '',
-    cpf: '',
-    phone: '',
-    email: ''
+    name: initialClient?.name || '',
+    cpf: initialClient?.cpf || '',
+    phone: initialClient?.phone || '',
+    email: initialClient?.email || ''
   });
 
   const [work, setWork] = useState<WorkData>({

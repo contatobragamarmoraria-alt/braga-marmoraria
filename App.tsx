@@ -149,8 +149,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
                 {user.permissions?.canViewFinancials && (
                   <SidebarLink to="/app/vendas" icon={TrendingUp} label="Comercial" active={location.pathname === '/app/vendas'} isCollapsed={isCollapsed} />
                 )}
-                <SidebarLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} isCollapsed={isCollapsed} />
-                <SidebarLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
+                <SidebarLink to="/app/projetos" icon={Columns} label="Projetos" active={location.pathname === '/app/projetos'} isCollapsed={isCollapsed} />
                 <SidebarLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} isCollapsed={isCollapsed} />
                 {(user.role === 'ADMIN' || user.role === 'MANAGER' || user.role === 'SUPPORT') && (
                   <SidebarLink to="/app/equipe" icon={UserCog} label="Equipe" active={location.pathname === '/app/equipe'} isCollapsed={isCollapsed} />
@@ -233,8 +232,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
         <nav className="md:hidden bg-white dark:bg-onyx border-t border-stone-200 dark:border-white/5 shrink-0 flex justify-around items-center h-16 px-2 pb-[env(safe-area-inset-bottom)] z-50">
           <BottomNavLink to="/app/dashboard" icon={LayoutDashboard} label="Início" active={location.pathname === '/app/dashboard'} />
           <BottomNavLink to="/app/vendas" icon={TrendingUp} label="Vendas" active={location.pathname === '/app/vendas'} />
-          <BottomNavLink to="/app/projetos-lista" icon={LayoutTemplate} label="Projetos" active={location.pathname === '/app/projetos-lista'} />
-          <BottomNavLink to="/app/projetos" icon={Columns} label="Produção" active={location.pathname === '/app/projetos'} />
+          <BottomNavLink to="/app/projetos" icon={Columns} label="Projetos" active={location.pathname === '/app/projetos'} />
           <BottomNavLink to="/app/proprietarios" icon={Users} label="Clientes" active={location.pathname === '/app/proprietarios'} />
         </nav>
       </main>
@@ -246,7 +244,7 @@ const AppLayout = ({ children, onOpenImport, theme, toggleTheme }: {
             onClose={() => setIsNewProjectOpen(false)}
             onCreated={() => {
               setIsNewProjectOpen(false);
-              navigate('/app/projetos-lista');
+              navigate('/app/projetos');
             }}
           />
         )}
@@ -355,8 +353,7 @@ const AppContent = () => {
         <Route path="/app/dashboard" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><Dashboard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/vendas" element={<ProtectedRoute permission="canViewFinancials"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><SalesFlow /></AppLayout></ProtectedRoute>} />
         <Route path="/app/catalogo" element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="/app/projetos-lista" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectListModule /></AppLayout></ProtectedRoute>} />
-        <Route path="/app/projetos-detalhe/:id" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ProjectSupabaseDetail /></AppLayout></ProtectedRoute>} />
+        <Route path="/app/projetos-lista" element={<Navigate to="/app/projetos" replace />} />
         <Route path="/app/projetos" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><KanbanBoard projects={activeProjects} updateProject={updateProject} addProject={addProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/proprietarios" element={<ProtectedRoute permission="canViewTechnical"><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><ClientsList projects={activeProjects} onDelete={deleteProject} /></AppLayout></ProtectedRoute>} />
         <Route path="/app/equipe" element={<ProtectedRoute><AppLayout theme={theme} toggleTheme={toggleTheme} onOpenImport={() => setIsImportOpen(true)}><TeamModule /></AppLayout></ProtectedRoute>} />
