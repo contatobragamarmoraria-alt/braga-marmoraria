@@ -1,13 +1,12 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { BarChart, Bar, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { CheckCircle, PlusCircle, Briefcase, DollarSign, X, Clock, User, Layers, Plus, ChevronRight, MessageCircle, Mail, Globe, LogOut, RefreshCw, Send, Check, Eye, Sparkles, Heart } from 'lucide-react';
+import { CheckCircle, PlusCircle, Briefcase, DollarSign, X, Clock, User, Layers, ChevronRight, MessageCircle, Mail, Globe, LogOut, RefreshCw, Send, Check, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Project, ProjectTask } from '../types';
 import { MOCK_TEAM, STAGES } from '../constants';
 import { occurrenceService } from '../services/occurrenceService';
 import ProjectDetailsModal from './ProjectDetailsModal';
-import ProjectFormWizard from './ProjectFormWizard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleService } from '../src/services/GoogleService';
 import { useAuth } from './AuthContext';
@@ -347,7 +346,6 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
   const { user } = useAuth();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAlertsModalOpen, setIsAlertsModalOpen] = useState(false);
-  const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
   const [isInboxModalOpen, setIsInboxModalOpen] = useState(false);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [googleAuth, setGoogleAuth] = useState(false);
@@ -417,7 +415,7 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
     setSelectedArea(null);
   };
 
-  const ongoingProjects = useMemo(() => projects.filter(p => p.progress > 0 && p.progress < 100), [projects]);
+  const ongoingProjects = useMemo(() => projects.filter(p => p.progress < 100), [projects]);
   const completedThisMonth = useMemo(() => {
     return projects.filter(p => {
       if (p.progress !== 100) return false;
@@ -690,24 +688,9 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
         </div>
       </div>
       
-      <div className="shrink-0 flex justify-end mt-4">
-        <button 
-          onClick={() => setIsSmartModalOpen(true)} 
-          className="gold-bg px-8 py-4 text-black rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-gold/20 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all"
-        >
-          <Plus size={18} /> Novo Cliente
-        </button>
-      </div>
-      
       <AnimatePresence>
         {selectedProject && <ProjectDetailsModal project={selectedProject} onClose={() => setSelectedProject(null)} updateProject={updateProject} />}
         <AlertsModal isOpen={isAlertsModalOpen} onClose={() => setIsAlertsModalOpen(false)} notifications={notifications} onCompleteTask={handleCompleteTask} onNavigate={handleNavigate} googleAuth={googleAuth} />
-        {isSmartModalOpen && (
-          <ProjectFormWizard onClose={() => setIsSmartModalOpen(false)} onCreated={() => {
-            setIsSmartModalOpen(false);
-            navigate('/app/projetos');
-          }} />
-        )}
         <AreaProjectsModal isOpen={!!selectedArea} onClose={() => setSelectedArea(null)} areaName={selectedArea || ''} projects={projectsByArea} onNavigate={handleNavigate} />
         <InboxModal isOpen={isInboxModalOpen} onClose={() => setIsInboxModalOpen(false)} googleAuth={googleAuth} />
       </AnimatePresence>
