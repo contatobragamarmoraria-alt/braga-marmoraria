@@ -73,36 +73,67 @@ const CLIENT_RESPONSIBILITIES = [
   'Responsável por acabamentos'
 ];
 
-const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }> = ({ onClose, onCreated }) => {
+interface InitialClientData {
+  name?: string;
+  cpf?: string;
+  phone?: string;
+  email?: string;
+}
+
+const DRAFT_KEY = 'bm-project-wizard-draft';
+
+const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; initialClient?: InitialClientData }> = ({ onClose, onCreated, initialClient }) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientCreated, setClientCreated] = useState<AppUser | null>(null);
   const [showCredentials, setShowCredentials] = useState(false);
 
-  const [client, setClient] = useState<ClientData>({
-    name: '',
-    cpf: '',
-    phone: '',
-    email: ''
+  const [client, setClient] = useState<ClientData>(() => {
+    if (initialClient) {
+      return {
+        name: initialClient.name || '',
+        cpf: initialClient.cpf || '',
+        phone: initialClient.phone || '',
+        email: initialClient.email || ''
+      };
+    }
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        return draft.client || { name: '', cpf: '', phone: '', email: '' };
+      } catch {
+        return { name: '', cpf: '', phone: '', email: '' };
+      }
+    }
+    return { name: '', cpf: '', phone: '', email: '' };
   });
 
-  const [work, setWork] = useState<WorkData>({
-    address: '',
-    cep: '',
-    neighborhood: '',
-    city: '',
-    state: 'SP'
+  const [work, setWork] = useState<WorkData>(() => {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        return draft.work || { address: '', cep: '', neighborhood: '', city: '', state: 'SP' };
+      } catch {
+        return { address: '', cep: '', neighborhood: '', city: '', state: 'SP' };
+      }
+    }
+    return { address: '', cep: '', neighborhood: '', city: '', state: 'SP' };
   });
 
-  const [scope, setScope] = useState<ScopeData>({
-    items: [],
-    totalValue: 0,
-    paymentForm: 'parcelado',
-    paymentInstallments: 6,
-    desiredDate: '',
-    notes: '',
-    clientResponsibilities: []
+  const [scope, setScope] = useState<ScopeData>(() => {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        return draft.scope || { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
+      } catch {
+        return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
+      }
+    }
+    return { items: [], totalValue: 0, paymentForm: 'parcelado', paymentInstallments: 6, desiredDate: '', notes: '', clientResponsibilities: [] };
   });
 
   const validateStep = (stepNum: number): boolean => {
@@ -117,17 +148,26 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
     if (stepNum === 3) {
       return scope.items.length > 0 && scope.totalValue > 0;
     }
+    if (stepNum === 4) {
+      return true; // Revisão sempre é válida
+    }
     return false;
+  };
+
+  const saveDraft = () => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ client, work, scope, step }));
   };
 
   const handleNextStep = () => {
     if (validateStep(step)) {
+      saveDraft();
       setStep(step + 1);
     }
   };
 
   const handlePreviousStep = () => {
     if (step > 1) {
+      saveDraft();
       setStep(step - 1);
     }
   };
@@ -321,6 +361,9 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
         status: 'SUCCESS'
       });
 
+      // Limpar rascunho após criação bem-sucedida
+      localStorage.removeItem(DRAFT_KEY);
+
       // Mostrar credenciais por 5 segundos, depois fechar
       setShowCredentials(true);
       setTimeout(() => {
@@ -359,7 +402,7 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
         <div className="bg-gold/10 dark:bg-gold/5 border-b border-stone-200 dark:border-white/10 p-6 flex items-center justify-between sticky top-0 z-10">
           <div>
             <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-white">Novo Projeto</h2>
-            <p className="text-sm text-stone-600 dark:text-stone-400 mt-1">Etapa {step} de 3</p>
+            <p className="text-sm text-stone-600 dark:text-stone-400 mt-1">Etapa {step} de 4</p>
           </div>
           <button
             onClick={onClose}
@@ -374,8 +417,8 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
           <div className="h-2 bg-stone-200 dark:bg-white/10">
             <motion.div
               className="h-full bg-gold"
-              initial={{ width: '33%' }}
-              animate={{ width: `${(step / 3) * 100}%` }}
+              initial={{ width: '25%' }}
+              animate={{ width: `${(step / 4) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
@@ -779,6 +822,152 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
                 </div>
               </motion.div>
             )}
+
+            {step === 4 && (
+              <motion.div
+                key="step4"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <h3 className="text-lg font-bold text-stone-900 dark:text-white mb-6">Revisão do Projeto</h3>
+
+                {/* Cliente */}
+                <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-stone-900 dark:text-white text-sm">Dados do Cliente</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Nome</p>
+                      <p className="text-sm font-serif text-stone-900 dark:text-white">{client.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">CPF</p>
+                      <p className="text-sm font-mono text-stone-900 dark:text-white">{client.cpf}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Telefone</p>
+                      <p className="text-sm text-stone-900 dark:text-white">{client.phone}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">E-mail</p>
+                      <p className="text-sm font-mono text-stone-900 dark:text-white">{client.email}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Local da Obra */}
+                <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-stone-900 dark:text-white text-sm">Local da Obra</h4>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Endereço</p>
+                      <p className="text-sm text-stone-900 dark:text-white">{work.address}</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">CEP</p>
+                        <p className="text-sm text-stone-900 dark:text-white">{work.cep}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Bairro</p>
+                        <p className="text-sm text-stone-900 dark:text-white">{work.neighborhood}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Cidade</p>
+                        <p className="text-sm text-stone-900 dark:text-white">{work.city}, {work.state}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Escopo e Itens */}
+                <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-4">
+                  <h4 className="font-semibold text-stone-900 dark:text-white text-sm">Itens do Serviço</h4>
+                  <div className="space-y-3">
+                    {scope.items.map((item, idx) => (
+                      <div key={item.id} className="bg-white dark:bg-white/10 p-3 rounded space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Item {idx + 1}</p>
+                            <p className="text-sm text-stone-900 dark:text-white font-semibold">{item.type}</p>
+                          </div>
+                          <p className="text-sm font-serif font-bold text-gold">R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        </div>
+                        <div className="flex gap-4 text-xs">
+                          <div>
+                            <span className="text-stone-600 dark:text-stone-400">Material:</span>
+                            <span className="text-stone-900 dark:text-white ml-2">{item.material}</span>
+                          </div>
+                          <div>
+                            <span className="text-stone-600 dark:text-stone-400">Cor:</span>
+                            <span className="text-stone-900 dark:text-white ml-2">{item.color}</span>
+                          </div>
+                        </div>
+                        {item.description && (
+                          <div>
+                            <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Descrição</p>
+                            <p className="text-sm text-stone-900 dark:text-white">{item.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-stone-200 dark:border-white/10 pt-3 mt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-stone-900 dark:text-white">Valor Total:</span>
+                      <span className="text-xl font-serif font-bold text-gold">
+                        R$ {scope.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Condições Comerciais */}
+                <div className="bg-stone-50 dark:bg-white/5 rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-stone-900 dark:text-white text-sm">Condições Comerciais</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Forma de Pagamento</p>
+                      <p className="text-sm text-stone-900 dark:text-white">
+                        {scope.paymentForm === 'parcelado' ? `${scope.paymentInstallments}x` : 'À Vista'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Data Desejada</p>
+                      <p className="text-sm text-stone-900 dark:text-white">
+                        {scope.desiredDate ? new Date(scope.desiredDate).toLocaleDateString('pt-BR') : 'Não informado'}
+                      </p>
+                    </div>
+                  </div>
+                  {scope.notes && (
+                    <div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold">Observações</p>
+                      <p className="text-sm text-stone-900 dark:text-white">{scope.notes}</p>
+                    </div>
+                  )}
+                  {scope.clientResponsibilities.length > 0 && (
+                    <div className="pt-2">
+                      <p className="text-xs text-stone-600 dark:text-stone-400 font-semibold mb-2">Responsabilidades do Cliente</p>
+                      <ul className="text-sm text-stone-900 dark:text-white space-y-1">
+                        {scope.clientResponsibilities.map((resp) => (
+                          <li key={resp} className="flex items-start gap-2">
+                            <span className="text-gold mt-1">•</span>
+                            <span>{resp}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded p-4">
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
+                    <strong>Atenção:</strong> Ao confirmar, um novo cliente será criado com credenciais automáticas para acompanhar o projeto.
+                  </p>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
           )}
         </div>
@@ -801,10 +990,18 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
             >
               Próximo <ChevronRight size={16} />
             </button>
+          ) : step === 3 ? (
+            <button
+              onClick={handleNextStep}
+              disabled={!validateStep(3)}
+              className="flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            >
+              Revisar <ChevronRight size={16} />
+            </button>
           ) : (
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !validateStep(3)}
+              disabled={isSubmitting}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
             >
               {isSubmitting ? (
@@ -814,7 +1011,7 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void }
                 </>
               ) : (
                 <>
-                  <Check size={16} /> Criar Projeto
+                  <Check size={16} /> Confirmar e Criar
                 </>
               )}
             </button>
