@@ -176,15 +176,25 @@ const ProjectContractTab: React.FC<Props> = ({ project, updateProject }) => {
             <div>
               <h4 className="text-gold font-bold uppercase tracking-[0.2em] text-[10px] mb-4">Itens Integrados</h4>
               <ul className="space-y-4">
-                {project.detailedScope.map((s, i) => (
+                {(project.detailedScope && project.detailedScope.length > 0
+                  ? project.detailedScope
+                  : (project.contractData?.scope || []).map(s => ({ title: s, items: [] }))
+                ).map((s, i) => (
                   <li key={i} className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                     <div className="w-6 h-6 rounded-lg bg-gold/20 text-gold flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 size={14} /></div>
                     <div>
                       <p className="font-serif font-bold text-lg">{s.title}</p>
-                      <p className="text-xs text-stone-400 mt-1">{s.items.join(' • ')}</p>
+                      {s.items && s.items.length > 0 && (
+                        <p className="text-xs text-stone-400 mt-1">{s.items.join(' • ')}</p>
+                      )}
                     </div>
                   </li>
                 ))}
+                {(project.detailedScope?.length === 0 || !project.detailedScope) && (!project.contractData?.scope || project.contractData.scope.length === 0) && (
+                  <li className="text-stone-400 text-sm italic p-4 bg-white/5 rounded-2xl border border-white/5">
+                    Nenhum item de escopo cadastrado para este projeto.
+                  </li>
+                )}
               </ul>
             </div>
             <div className="bg-white/5 rounded-3xl p-8 border border-white/10 backdrop-blur-xl">

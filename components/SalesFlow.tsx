@@ -182,6 +182,35 @@ const SalesFlow: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Apresentação Institucional */}
+      <motion.div layout className="bg-stone-950 text-white rounded-[2rem] overflow-hidden shrink-0">
+        <div className="p-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gold/20 text-gold rounded-lg flex items-center justify-center">
+              <Target size={16} />
+            </div>
+            <div>
+              <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Apresentação Institucional</p>
+              <h3 className="text-sm font-serif font-bold">O que o cliente pode esperar</h3>
+            </div>
+          </div>
+        </div>
+        <div className="px-5 pb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { num: '01', title: 'Primeiro Contato', desc: 'Atendimento personalizado e levantamento das necessidades do projeto.' },
+            { num: '02', title: 'Visita Técnica', desc: 'Medição a laser e análise das condições do ambiente para execução.' },
+            { num: '03', title: 'Proposta & Contrato', desc: 'Proposta detalhada com escopo, materiais, valores e prazos definidos.' },
+            { num: '04', title: 'Produção & Entrega', desc: 'Fabricação artesanal em atelier próprio e instalação por equipe especializada.' },
+          ].map((step) => (
+            <div key={step.num} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-gold uppercase tracking-widest">{step.num}</span>
+              <h4 className="text-sm font-serif font-bold mt-1 mb-1">{step.title}</h4>
+              <p className="text-[10px] text-stone-400 leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       <motion.div layout className="flex-1 flex gap-3 pb-2 overflow-x-auto no-scrollbar min-h-[75vh] px-1">
         {stages.map((stage, idx) => {
           const Icon = ICON_MAP[stage.iconName] || Target;
