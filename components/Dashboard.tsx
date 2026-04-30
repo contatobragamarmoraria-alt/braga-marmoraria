@@ -1,11 +1,12 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { BarChart, Bar, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { CheckCircle, PlusCircle, Briefcase, DollarSign, X, Clock, User, Layers, ChevronRight, MessageCircle, Mail, Globe, LogOut, RefreshCw, Send, Check, Eye } from 'lucide-react';
+import { CheckCircle, PlusCircle, Briefcase, DollarSign, X, Clock, User, Layers, ChevronRight, ChevronDown, MessageCircle, Mail, Globe, LogOut, RefreshCw, Send, Check, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Project, ProjectTask } from '../types';
+import { Project, ProjectTask, AppUser } from '../types';
 import { MOCK_TEAM, STAGES } from '../constants';
 import { occurrenceService } from '../services/occurrenceService';
+import { userService } from '../services/userService';
 import ProjectDetailsModal from './ProjectDetailsModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleService } from '../src/services/GoogleService';
@@ -351,9 +352,17 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
   const [googleAuth, setGoogleAuth] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(true);
   const [occurrences, setOccurrences] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<AppUser[]>([]);
+  const [expandedMember, setExpandedMember] = useState<string | null>(null);
 
   useEffect(() => {
     occurrenceService.subscribeToOccurrences(setOccurrences);
+  }, []);
+
+  useEffect(() => {
+    userService.getUsers().then(users =>
+      setTeamMembers(users.filter((u: AppUser) => u.role !== 'CLIENT'))
+    ).catch(() => {});
   }, []);
 
   const navigate = useNavigate();
@@ -455,12 +464,20 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
     });
   }, [ongoingProjects, selectedArea]);
   
-  const professionalWorkload = useMemo(() => {
-    return MOCK_TEAM.map(member => ({
-      name: member.name.split(' ')[0],
-      projetos: ongoingProjects.filter(p => p.teamIds.includes(member.id)).length,
+  const teamWorkload = useMemo(() => {
+    const members = teamMembers.length > 0 ? teamMembers : MOCK_TEAM as any[];
+    return members.map(member => ({
+      member,
+      projects: ongoingProjects.filter(p =>
+        (p.teamIds || []).includes(member.id) || p.responsible === member.name
+      )
     }));
-  }, [ongoingProjects]);
+  }, [teamMembers, ongoingProjects]);
+
+  const maxTeamProjects = useMemo(() =>
+    Math.max(1, ...teamWorkload.map(tw => tw.projects.length)),
+    [teamWorkload]
+  );
 
   const revenueForecastData = useMemo(() => {
     const forecast = [];
@@ -669,21 +686,48 @@ const Dashboard: React.FC<{ projects: Project[], updateProject: (p: Project) => 
                  )}
                </div>
             </div>
-           <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col">
-              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-3">Carga da Equipe</h4>
-              <div className="flex-1 min-h-[120px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={professionalWorkload} layout="vertical" margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
-                          <XAxis type="number" hide />
-                          <YAxis type="category" dataKey="name" width={60} tick={{fontSize: 8, fontWeight: '700', fill: '#a8a29e'}} axisLine={false} tickLine={false}/>
-                          <Tooltip 
-                            cursor={{fill: 'rgba(212, 175, 55, 0.05)'}}
-                            contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', fontSize: '10px' }}
-                          />
-                          <Bar dataKey="projetos" fill="#D4AF37" barSize={8} radius={[0, 2, 2, 0]} />
-                      </BarChart>
-                  </ResponsiveContainer>
-              </div>
+           <div className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-stone-100 dark:border-white/5 shadow-sm flex flex-col gap-2 overflow-y-auto max-h-[260px] custom-scroll">
+              <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-1 shrink-0">Carga da Equipe</h4>
+              {teamWorkload.map(({ member, projects: mp }) => {
+                const barPct = Math.round((mp.length / maxTeamProjects) * 100);
+                const isOpen = expandedMember === member.id;
+                return (
+                  <div key={member.id} className="border border-stone-100 dark:border-white/5 rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => setExpandedMember(isOpen ? null : member.id)}
+                      className="w-full p-2.5 flex items-center gap-2.5 hover:bg-stone-50 dark:hover:bg-white/5 transition-colors text-left"
+                    >
+                      <img src={member.avatar} className="w-7 h-7 rounded-lg object-cover shrink-0" alt={member.name} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-stone-900 dark:text-white truncate">{member.name.split(' ')[0]}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <div className="flex-1 h-1.5 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: `${barPct}%` }} />
+                          </div>
+                          <span className="text-[9px] font-bold text-gold shrink-0">{mp.length}</span>
+                        </div>
+                      </div>
+                      <ChevronDown size={12} className={`text-stone-300 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                      {isOpen && (
+                        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
+                          <div className="px-3 pb-3 pt-2 border-t border-stone-100 dark:border-white/5 space-y-1.5">
+                            {mp.length === 0 ? (
+                              <p className="text-[9px] text-stone-400 italic">Sem projetos ativos</p>
+                            ) : mp.map(p => (
+                              <div key={p.id} onClick={() => navigate(`/project/${p.id}`)} className="flex items-center justify-between gap-2 cursor-pointer group">
+                                <p className="text-[9px] font-bold text-stone-700 dark:text-stone-300 truncate group-hover:text-gold transition-colors">{p.clientName}</p>
+                                <span className="text-[8px] text-stone-400 shrink-0 truncate max-w-[80px]">{p.projectType}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </div>
         </div>
       </div>

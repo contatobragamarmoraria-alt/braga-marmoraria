@@ -29,6 +29,7 @@ async function startServer() {
 
   // Data persistence helpers
   const DATA_DIR = path.join(__dirname, 'data');
+  await fs.mkdir(DATA_DIR, { recursive: true });
   
   async function readDataFile(filename: string, defaultValue: any = []) {
     try {
