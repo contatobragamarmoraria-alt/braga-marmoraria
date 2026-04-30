@@ -254,7 +254,7 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
 
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 mb-4 shrink-0 print:hidden">
           {[
-            { id: 'presentation', label: 'Apresentação', icon: Monitor },
+            
             { id: 'resumo', label: 'Resumo', icon: Eye },
             { id: 'cliente', label: 'Área Cliente', icon: Gem },
             { id: 'contract', label: 'Contrato', icon: FileText },
