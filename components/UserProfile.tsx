@@ -21,7 +21,7 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
   const [editingOtherUser, setEditingOtherUser] = useState<AppUser | null>(null);
   const [avatar, setAvatar] = useState(() => localStorage.getItem(`user-avatar-${user.id}`) || user.avatar);
-  
+
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
@@ -126,13 +126,13 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                    {isEditing ? <><Save size={14} /> Salvar Alterações</> : <><User size={14} /> Editar Perfil</>}
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400 ml-1">Nome Completo</label>
-                  <input 
-                    type="text" 
-                    value={formData.name} 
+                  <input
+                    type="text"
+                    value={formData.name}
                     disabled={!isEditing}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="w-full p-5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl outline-none focus:ring-1 focus:ring-gold transition-all text-stone-900 dark:text-white font-serif disabled:opacity-50"
@@ -140,9 +140,9 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400 ml-1">E-mail Corporativo</label>
-                  <input 
-                    type="email" 
-                    value={formData.email} 
+                  <input
+                    type="email"
+                    value={formData.email}
                     disabled={!isEditing}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     className="w-full p-5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl outline-none focus:ring-1 focus:ring-gold transition-all text-stone-900 dark:text-white font-serif disabled:opacity-50"
@@ -150,9 +150,9 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400 ml-1">Telefone / WhatsApp</label>
-                  <input 
-                    type="text" 
-                    value={formData.phone} 
+                  <input
+                    type="text"
+                    value={formData.phone}
                     disabled={!isEditing}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                     className="w-full p-5 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl outline-none focus:ring-1 focus:ring-gold transition-all text-stone-900 dark:text-white font-serif disabled:opacity-50"
@@ -176,7 +176,7 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
 
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
-                    <input 
+                    <input
                       type={showPin ? "text" : "password"}
                       value={newPin}
                       onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
@@ -184,14 +184,14 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                       className="w-full p-4 pl-12 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-2xl outline-none focus:border-gold transition-all text-stone-900 dark:text-white"
                     />
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
-                    <button 
+                    <button
                       onClick={() => setShowPin(!showPin)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-gold"
                     >
                       {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <button 
+                  <button
                     onClick={handlePinUpdate}
                     className="px-8 py-4 gold-bg text-black rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
                   >
@@ -210,7 +210,7 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                     <span className="text-[10px] font-bold uppercase tracking-widest">{allUsers.length} Membros</span>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4">
                   {allUsers.map((u) => (
                     <div key={u.id} className="p-6 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -221,14 +221,14 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                           <p className="text-[9px] font-bold text-gold uppercase tracking-[0.2em]">{u.role}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-4">
                         <div className="bg-stone-50 dark:bg-white/5 px-4 py-2 rounded-xl border border-stone-100 dark:border-white/5">
                           <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest mb-1">PIN Atual</p>
                           <p className="text-sm font-mono font-bold text-stone-900 dark:text-white tracking-widest">{u.pin}</p>
                         </div>
-                        
-                        <button 
+
+                        <button
                           onClick={() => {
                             const newP = prompt(`Novo PIN para ${u.name}:`, u.pin);
                             if (newP && newP !== u.pin) handleOtherUserPinUpdate(u.id, newP);
@@ -238,11 +238,11 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                         >
                           <Edit2 size={18} />
                         </button>
-                        
-                        <button 
-                          onClick={async () => {
+
+                        <button
+                          onClick={() => {
                             if (confirm(`Deseja acessar o sistema como ${u.name}?`)) {
-                              await logout();
+                              onLogout();
                               localStorage.setItem('bm-local-user', JSON.stringify(u));
                               window.location.reload();
                             }
@@ -276,7 +276,7 @@ const UserProfile: React.FC<Props> = ({ user, onUpdate, onLogout }) => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
              </div>
 
-             <button 
+             <button
                 onClick={onLogout}
                 className="w-full p-6 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 rounded-3xl flex items-center justify-center gap-3 text-rose-500 font-bold text-[10px] uppercase tracking-[0.3em] transition-all"
              >

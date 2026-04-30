@@ -4,6 +4,7 @@ import { Upload, FileText, Mic, Image as ImageIcon, Check, Loader2, Trash2 } fro
 import { motion } from 'framer-motion';
 import { Project, ProjectDocument } from '../types';
 import { GoogleGenAI } from "@google/genai";
+import { uploadProjectImage, uploadDocument } from '../utils/imageUpload';
 
 interface Props {
   project: Project;
@@ -19,44 +20,51 @@ const ProjectArtifacts: React.FC<Props> = ({ project, updateProject }) => {
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !uploadType) return;
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
     setIsUploading(true);
-    
+
     try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const base64Data = e.target?.result as string;
-        
-        if (uploadType === 'audio') {
-          await convertAudioToText(base64Data, file.type);
-        } else if (uploadType === 'drawing' || uploadType === 'photo') {
-          const newDoc: ProjectDocument = {
-            id: `doc_${Date.now()}`,
-            name: file.name,
-            type: uploadType === 'drawing' ? 'Desenho Técnico' : 'Foto de Obra',
-            url: base64Data,
-            date: new Date().toISOString().split('T')[0]
-          };
-          
-          const updatedProject = {
-            ...project,
-            documents: [...project.documents, newDoc],
-            photoLog: uploadType === 'photo' 
-              ? [{
-                  id: `pl_${Date.now()}`,
-                  date: new Date().toISOString().split('T')[0],
-                  author: 'Sistema',
-                  notes: 'Upload manual via painel administrativo',
-                  images: [base64Data]
-                }, ...project.photoLog]
-              : project.photoLog
-          };
-          updateProject(updatedProject);
-        }
-        setIsUploading(false);
-        setUploadType(null);
+      if (uploadType === 'audio') {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          await convertAudioToText(e.target?.result as string, file.type);
+          setIsUploading(false);
+          setUploadType(null);
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      // Photo or drawing — compress image, then upload
+      const url = uploadType === 'photo'
+        ? await uploadProjectImage(file, project.id)
+        : await uploadDocument(file, project.id);
+
+      const newDoc: ProjectDocument = {
+        id: `doc_${Date.now()}`,
+        name: file.name,
+        type: uploadType === 'drawing' ? 'Desenho Técnico' : 'Foto de Obra',
+        url,
+        date: new Date().toISOString().split('T')[0],
       };
-      reader.readAsDataURL(file);
+
+      const updatedProject = {
+        ...project,
+        documents: [...project.documents, newDoc],
+        photoLog: uploadType === 'photo'
+          ? [{
+              id: `pl_${Date.now()}`,
+              date: new Date().toISOString().split('T')[0],
+              author: 'Sistema',
+              notes: 'Upload manual via painel administrativo',
+              images: [url],
+            }, ...project.photoLog]
+          : project.photoLog,
+      };
+      updateProject(updatedProject);
+      setIsUploading(false);
+      setUploadType(null);
     } catch (error) {
       console.error('Upload error:', error);
       setIsUploading(false);

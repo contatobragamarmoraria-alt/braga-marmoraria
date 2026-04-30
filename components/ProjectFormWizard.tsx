@@ -7,6 +7,7 @@ import { projectService } from '../services/projectService';
 import { userService } from '../services/userService';
 import { useAuth } from './AuthContext';
 import { Project, ProjectStatus, AppUser, UserPermissions } from '../types';
+import { getDefaultProductionTasks } from '../utils/defaultProductionTasks';
 
 interface ClientData {
   name: string;
@@ -292,7 +293,7 @@ const ProjectFormWizard: React.FC<{ onClose: () => void; onCreated: () => void; 
         status: 'AGUARDANDO_MEDICAO' as ProjectStatus,
         progress: 0,
         responsible: user?.name || '',
-        tasks: [],
+        tasks: getDefaultProductionTasks(),
         timeline: [],
         history: [{
           id: 'h1',
