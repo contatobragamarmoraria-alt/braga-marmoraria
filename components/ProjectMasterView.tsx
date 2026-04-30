@@ -17,6 +17,7 @@ import ProjectCalendar from './ProjectCalendar';
 import ProjectArtifacts from './ProjectArtifacts';
 import ProjectScopeIA from './ProjectScopeIA';
 import ClientProjectDashboard from './ClientProjectDashboard';
+import { uploadProjectImage } from '../utils/imageUpload';
 import { MOCK_TEAM, MOCK_PARTNERS, STAGES } from '../constants';
 import { MOCK_OCCURRENCES } from '../services/mockData';
 
@@ -46,23 +47,19 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
     if (tabFromUrl) setActiveTab(tabFromUrl as any);
   }, [location.search]);
 
-  const handlePhotoUpload = (files: FileList | null) => {
+  const handlePhotoUpload = async (files: FileList | null) => {
     if (!project || !files || files.length === 0) return;
-    const readers = Array.from(files).map(file => new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }));
-    Promise.all(readers).then(base64Images => {
-      const newLogEntry = {
-        id: `pl_${Date.now()}`,
-        date: new Date().toISOString().split('T')[0],
-        author: project.responsible || 'Equipe',
-        notes: 'Registro fotográfico adicionado.',
-        images: base64Images
-      };
-      updateProject({ ...project, photoLog: [newLogEntry, ...(project.photoLog || [])] });
-    });
+    const urls = await Promise.all(
+      Array.from(files).map(file => uploadProjectImage(file, project.id))
+    );
+    const newLogEntry = {
+      id: `pl_${Date.now()}`,
+      date: new Date().toISOString().split('T')[0],
+      author: project.responsible || 'Equipe',
+      notes: 'Registro fotográfico adicionado.',
+      images: urls,
+    };
+    updateProject({ ...project, photoLog: [newLogEntry, ...(project.photoLog || [])] });
   };
   
   const handleToggleTask = (taskId: string) => {
