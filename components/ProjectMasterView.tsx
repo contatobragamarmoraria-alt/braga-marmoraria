@@ -9,13 +9,14 @@ import {
   FileText, Clock, Camera, Eye, ShieldCheck,
   CheckCircle2, ArrowUpRight, Award, Expand,
   Check, X, User, Undo2, AlertCircle, Trash2,
-  Image, Package, Upload, Plus
+  Image, Package, Upload, Plus, Gem
 } from 'lucide-react';
 import { Project } from '../types';
 import ProjectContractTab from './ProjectContractTab';
 import ProjectCalendar from './ProjectCalendar';
 import ProjectArtifacts from './ProjectArtifacts';
 import ProjectScopeIA from './ProjectScopeIA';
+import ClientProjectDashboard from './ClientProjectDashboard';
 import { MOCK_TEAM, MOCK_PARTNERS, STAGES } from '../constants';
 import { MOCK_OCCURRENCES } from '../services/mockData';
 
@@ -33,7 +34,7 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
   const initialTab = (searchParams.get('tab') as any) || 'resumo';
 
   const project = projects.find(p => p.id === id);
-  const [activeTab, setActiveTab] = useState<'resumo' | 'contract' | 'tarefas' | 'timeline' | 'calendar' | 'gallery' | 'artifacts' | 'occurrences' | 'scope'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'resumo' | 'contract' | 'tarefas' | 'timeline' | 'calendar' | 'gallery' | 'artifacts' | 'occurrences' | 'scope' | 'cliente'>(initialTab);
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingOccurrence, setEditingOccurrence] = useState<any | null>(null);
@@ -257,6 +258,7 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
         <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 mb-4 shrink-0 print:hidden">
           {[
             { id: 'resumo', label: 'Resumo', icon: Eye },
+            { id: 'cliente', label: 'Área Cliente', icon: Gem },
             { id: 'contract', label: 'Contrato', icon: FileText },
             { id: 'tarefas', label: 'Checklist', icon: CheckCircle2 },
             { id: 'timeline', label: 'Fluxo', icon: Clock },
@@ -375,6 +377,12 @@ const ProjectMasterView: React.FC<Props> = ({ projects, updateProject, deletePro
                       <p className="text-sm text-stone-700 dark:text-stone-300 italic">{project.notes}</p>
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeTab === 'cliente' && (
+                <div className="h-full overflow-y-auto custom-scroll -mx-4 md:-mx-0">
+                  <ClientProjectDashboard project={project} />
                 </div>
               )}
 
