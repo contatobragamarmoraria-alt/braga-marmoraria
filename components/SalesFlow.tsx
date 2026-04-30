@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Megaphone, UserCheck,
   FileCheck, Target, Stethoscope, Trash2, GripVertical, X, ShieldCheck,
-  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload
+  Calendar, Clock, Edit3, Save, Undo2, Redo2, History, CloudUpload, Play
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ProjectPresentation from './ProjectPresentation';
 
 const ICON_MAP: Record<string, any> = {
   Megaphone, UserCheck, FileCheck, Target, Stethoscope, ShieldCheck, Calendar
@@ -79,6 +80,14 @@ const SalesFlow: React.FC = () => {
   const [showAutoSaveToast, setShowAutoSaveToast] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedStages, setExpandedStages] = useState<Set<string>>(new Set(INITIAL_STAGES.map(s => s.id)));
+  const [isPresentationOpen, setIsPresentationOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleStage = (stageId: string) => {
     const next = new Set(expandedStages);
@@ -183,56 +192,52 @@ const SalesFlow: React.FC = () => {
       </motion.div>
 
       {/* Apresentação Institucional */}
-      <motion.div layout className="bg-stone-950 text-white rounded-[2rem] overflow-hidden shrink-0">
-        <div className="p-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gold/20 text-gold rounded-lg flex items-center justify-center">
-              <Target size={16} />
+      <motion.div layout>
+        <button
+          onClick={() => setIsPresentationOpen(true)}
+          className="w-full bg-stone-950 text-white rounded-[2rem] overflow-hidden p-5 flex items-center justify-between group hover:ring-2 hover:ring-gold/40 transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gold/20 text-gold rounded-2xl flex items-center justify-center group-hover:bg-gold group-hover:text-black transition-all shrink-0">
+              <Play size={20} />
             </div>
-            <div>
+            <div className="text-left">
               <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold">Apresentação Institucional</p>
-              <h3 className="text-sm font-serif font-bold">O que o cliente pode esperar</h3>
+              <h3 className="text-base font-serif font-bold">O que o cliente pode esperar</h3>
+              <p className="text-[10px] text-stone-400 mt-0.5">7 etapas · slides completos · clique para abrir</p>
             </div>
           </div>
-        </div>
-        <div className="px-5 pb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { num: '01', title: 'Primeiro Contato', desc: 'Atendimento personalizado e levantamento das necessidades do projeto.' },
-            { num: '02', title: 'Visita Técnica', desc: 'Medição a laser e análise das condições do ambiente para execução.' },
-            { num: '03', title: 'Proposta & Contrato', desc: 'Proposta detalhada com escopo, materiais, valores e prazos definidos.' },
-            { num: '04', title: 'Produção & Entrega', desc: 'Fabricação artesanal em atelier próprio e instalação por equipe especializada.' },
-          ].map((step) => (
-            <div key={step.num} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-              <span className="text-[10px] font-bold text-gold uppercase tracking-widest">{step.num}</span>
-              <h4 className="text-sm font-serif font-bold mt-1 mb-1">{step.title}</h4>
-              <p className="text-[10px] text-stone-400 leading-relaxed">{step.desc}</p>
-            </div>
-          ))}
-        </div>
+          <div className="shrink-0 px-4 py-2 bg-gold/10 border border-gold/20 rounded-xl text-gold text-[10px] font-bold uppercase tracking-widest group-hover:bg-gold group-hover:text-black transition-all">
+            Iniciar →
+          </div>
+        </button>
       </motion.div>
 
-      <motion.div layout className="flex-1 flex gap-3 pb-2 overflow-x-auto no-scrollbar min-h-[75vh] px-1">
+      <motion.div layout className={`flex-1 flex gap-3 pb-2 px-1 ${isMobile ? 'flex-col' : 'flex-row overflow-x-auto no-scrollbar min-h-[75vh]'}`}>
         {stages.map((stage, idx) => {
           const Icon = ICON_MAP[stage.iconName] || Target;
           const isExpanded = expandedStages.has(stage.id);
-          
+
           return (
-            <motion.div 
-              key={stage.id} 
+            <motion.div
+              key={stage.id}
               layout
               onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
               onDrop={(e) => handleDropToStage(e, stage.id)}
-              animate={{ 
-                width: isExpanded ? '100%' : 60,
-                flex: isExpanded ? 1 : 'none'
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-              style={{ minWidth: isExpanded ? '240px' : '60px' }}
-              className={`relative group flex flex-col h-full rounded-[2rem] border transition-colors duration-500 overflow-hidden shrink-0 
+              {...(!isMobile ? {
+                animate: {
+                  width: isExpanded ? '100%' : 52,
+                  flex: isExpanded ? 1 : 'none'
+                },
+                transition: { type: "spring", stiffness: 300, damping: 30 },
+                style: { minWidth: isExpanded ? '200px' : '52px' }
+              } : {})}
+              className={`relative group flex flex-col rounded-[2rem] border transition-colors duration-500 overflow-hidden
+                ${isMobile ? 'w-full' : 'shrink-0 h-full'}
                 ${isExpanded ? 'bg-stone-50/50 dark:bg-stone-900/30 border-stone-200 dark:border-white/10' : 'bg-white dark:bg-onyx border-stone-100 dark:border-white/5 hover:border-gold/30'}
                 ${isDragging ? 'border-dashed border-stone-300 dark:border-white/20' : ''}`}
             >
-              <div onClick={() => toggleStage(stage.id)} className={`p-4 cursor-pointer flex transition-all duration-500 ${isExpanded ? 'flex-row items-center justify-between border-b border-stone-200 dark:border-white/5' : 'flex-col items-center h-full py-8'}`}>
+              <div onClick={() => toggleStage(stage.id)} className={`p-4 cursor-pointer flex transition-all duration-500 ${isExpanded ? 'flex-row items-center justify-between border-b border-stone-200 dark:border-white/5' : isMobile ? 'flex-row items-center justify-between' : 'flex-col items-center h-full py-8'}`}>
                 {isExpanded ? (
                   <>
                     <div className="flex items-center gap-2.5 min-w-0">
@@ -242,6 +247,14 @@ const SalesFlow: React.FC = () => {
                     <div className="flex items-center gap-2">
                        <span className="px-2 py-0.5 bg-stone-200 dark:bg-white/10 text-stone-500 dark:text-stone-300 rounded-full text-[10px] font-bold">{stage.items.length}</span>
                     </div>
+                  </>
+                ) : isMobile ? (
+                  <>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`p-1.5 bg-white dark:bg-white/5 rounded-lg border border-stone-200 dark:border-white/10 shrink-0 ${stage.color}`}><Icon size={16} /></div>
+                      <h3 className="text-[11px] font-bold text-stone-900 dark:text-stone-100 uppercase tracking-widest truncate">{stage.label}</h3>
+                    </div>
+                    <span className="px-2 py-0.5 bg-stone-200 dark:bg-white/10 text-stone-500 dark:text-stone-300 rounded-full text-[10px] font-bold">{stage.items.length}</span>
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-between h-full w-full">
@@ -294,6 +307,29 @@ const SalesFlow: React.FC = () => {
           )
         })}
       </motion.div>
+
+      <AnimatePresence>
+        {isPresentationOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] bg-stone-950/80 backdrop-blur-md flex flex-col"
+          >
+            <div className="absolute top-4 right-4 z-[160]">
+              <button
+                onClick={() => setIsPresentationOpen(false)}
+                className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl border border-white/10 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 p-4 md:p-8">
+              <ProjectPresentation project={{} as any} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {editingItem && (
